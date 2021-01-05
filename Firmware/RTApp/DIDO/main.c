@@ -245,18 +245,6 @@ RTCoreMain(void)
 //                    int i = 0;
                 }
                 break;
-            case DO_READ_PIN_LEVEL:
-                targetP = GetTargetPt(msg->body.pinId.pinId);
-                if (targetP == NULL) {
-                    InterCoreComm_SendIntValue(NG);
-                    continue;
-                }
-                val = (int)PulseCounter_GetPinLevel(targetP);
-
-                if (InterCoreComm_SendIntValue(val)) {
-//                    int i = 0;
-                }
-                break;
             case DO_WRITE_PIN_LEVEL:
                 targetP = GetTargetPt(msg->body.pinId.pinId);
                 if (targetP == NULL) {

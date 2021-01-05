@@ -31,15 +31,14 @@
 
 // request code
 enum {
-    DI_SET_CONFIG_AND_START = 1,  // setting up a pulse conter
+    DIDO_SET_CONFIG_AND_START = 1,  // setting up a pulse conter
     DI_PULSE_COUNT_RESET    = 2,  // reset a pulse counter
     DI_READ_PULSE_COUNT     = 3,  // read the counter value
     DI_READ_DUTY_SUM_TIME   = 4,  // read the time integration of pulse
     DI_READ_PULSE_LEVEL     = 5,  // read the input level of all DI pin
     DI_READ_PIN_LEVEL       = 6,  // read the input level of specific DI pin
-    DO_READ_PIN_LEVEL       = 7,  // read the input level of specific DI pin
-    DO_WRITE_PIN_LEVEL       = 8,  // read the input level of specific DI pin
-    DI_READ_VERSION         = 255,// read the RTApp version
+    DO_WRITE_PIN_LEVEL      = 7,  // write the output level of specific DO pin
+    DIDO_READ_VERSION         = 255,// read the RTApp version
 };
 
 //
