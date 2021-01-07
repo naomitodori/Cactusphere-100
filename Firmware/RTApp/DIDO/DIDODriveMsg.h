@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef _DI_DRIVER_MSG_H_
-#define _DI_DRIVER_MSG_H_
+#ifndef _DIDO_DRIVER_MSG_H_
+#define _DIDO_DRIVER_MSG_H_
 
 #ifndef _STDINT_H
 #include <stdint.h>
@@ -32,11 +32,11 @@
 // request code
 enum {
     DIDO_SET_CONFIG_AND_START = 1,  // setting up a pulse conter
-    DI_PULSE_COUNT_RESET    = 2,  // reset a pulse counter
-    DI_READ_PULSE_COUNT     = 3,  // read the counter value
-    DI_READ_DUTY_SUM_TIME   = 4,  // read the time integration of pulse
-    DI_READ_PULSE_LEVEL     = 5,  // read the input level of all DI pin
-    DI_READ_PIN_LEVEL       = 6,  // read the input level of specific DI pin
+    DIDO_PULSE_COUNT_RESET    = 2,  // reset a pulse counter
+    DIDO_READ_PULSE_COUNT     = 3,  // read the counter value
+    DIDO_READ_DUTY_SUM_TIME   = 4,  // read the time integration of pulse
+    DIDO_READ_PULSE_LEVEL     = 5,  // read the input level of all DIDO pin
+    DIDO_READ_PIN_LEVEL       = 6,  // read the input level of specific DIDO pin
     DO_WRITE_PIN_LEVEL      = 7,  // write the output level of specific DO pin
     DIDO_READ_VERSION         = 255,// read the RTApp version
 };
@@ -45,56 +45,56 @@ enum {
 // message structure
 //
 // header
-typedef struct DI_DriverMsgHdr {
+typedef struct DIDO_DriverMsgHdr {
     uint32_t	requestCode;
     uint32_t	messageLen;
-} DI_DriverMsgHdr;
+} DIDO_DriverMsgHdr;
 
 // body
-    // DI_SET_CONFIG_AND_START
-typedef struct DI_MsgSetConfig {
+    // DIDO_SET_CONFIG_AND_START
+typedef struct DIDO_MsgSetConfig {
     uint32_t	pinId;
     uint32_t minPulseWidth;
     uint32_t maxPulseCount;
     bool isPulseHigh;
 //
-// sizeof(DI_MsgSetConfig) == messageLen
+// sizeof(DIDO_MsgSetConfig) == messageLen
 //
-} DI_MsgSetConfig;
-    // DI_PULSE_COUNT_RESET
-typedef struct DI_MsgResetPulseCount {
+} DIDO_MsgSetConfig;
+    // DIDO_PULSE_COUNT_RESET
+typedef struct DIDO_MsgResetPulseCount {
     uint32_t	pinId;
     uint32_t initVal;
 //
-// sizeof(DI_MsgResetPulseCount) == messageLen
+// sizeof(DIDO_MsgResetPulseCount) == messageLen
 //
-} DI_MsgResetPulseCount;
-    // DI_READ_xx
-typedef struct DI_MsgPinId {
+} DIDO_MsgResetPulseCount;
+    // DIDO_READ_xx
+typedef struct DIDO_MsgPinId {
     uint32_t	pinId;
 //
-// sizeof(DI_MsgPinId) == messageLen
+// sizeof(DIDO_MsgPinId) == messageLen
 //
-} DI_MsgPinId;
+} DIDO_MsgPinId;
 
 // union of messages
-typedef struct DI_DriverMsg {
-    DI_DriverMsgHdr	header;
+typedef struct DIDO_DriverMsg {
+    DIDO_DriverMsgHdr	header;
     union {
-        DI_MsgSetConfig        setConfig;
-        DI_MsgResetPulseCount  resetPulseCount;
-        DI_MsgPinId            pinId;
+        DIDO_MsgSetConfig        setConfig;
+        DIDO_MsgResetPulseCount  resetPulseCount;
+        DIDO_MsgPinId            pinId;
     } body;
-} DI_DriverMsg;
+} DIDO_DriverMsg;
 
 // response message
-typedef struct DI_ReturnMsg {
+typedef struct DIDO_ReturnMsg {
     uint32_t	returnCode;
     uint32_t	messageLen;
     union {
         bool		levels[4];
         char        version[256];
     } message;
-} DI_ReturnMsg;
+} DIDO_ReturnMsg;
 
-#endif  // _DI_DRIVER_MSG_H_
+#endif  // _DIDO_DRIVER_MSG_H_

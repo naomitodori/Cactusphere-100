@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 1,
-  "Name": "DI_RTApp_Cactusphere_100",
+  "Name": "DIDO_RTApp_Cactusphere_100",
   "ComponentId": "c01e5fe8-6c61-4d14-beff-38492b1502b6",
   "EntryPoint": "/bin/app",
   "Capabilities": {

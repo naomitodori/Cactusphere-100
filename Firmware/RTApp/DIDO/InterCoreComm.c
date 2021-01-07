@@ -35,7 +35,7 @@ static BufferHeader*	sOutboundBuf = NULL;
 static BufferHeader*	sInboundBuf  = NULL;
 static uint32_t	sRingBufSize;
 static unsigned char	sRecvBuf[512];
-static DI_DriverMsg*	sDriverMsgBuf = NULL;
+static DIDO_DriverMsg*	sDriverMsgBuf = NULL;
 
 static bool
 InterCoreComm_SendData(const uint8_t* data, uint16_t len)
@@ -54,17 +54,17 @@ InterCoreComm_Initialize()
             &sOutboundBuf, &sInboundBuf, &sRingBufSize)) {
         return false;
     }
-    sDriverMsgBuf = (DI_DriverMsg*)(sRecvBuf + 20);  // GUID(16[Byte]) + reserved(4[Byte]) prefix
+    sDriverMsgBuf = (DIDO_DriverMsg*)(sRecvBuf + 20);  // GUID(16[Byte]) + reserved(4[Byte]) prefix
 
     return true;
 }
 
 // Wait and receive request from HLApp
-const DI_DriverMsg*
+const DIDO_DriverMsg*
 InterCoreComm_WaitAndRecvRequest()
 {
     uint32_t	dataSize;
-    DI_DriverMsgHdr*	msgHdr;
+    DIDO_DriverMsgHdr*	msgHdr;
 
     // wait request message arrives while sleep
     while (true) {
@@ -78,29 +78,29 @@ InterCoreComm_WaitAndRecvRequest()
     msgHdr = &sDriverMsgBuf->header;
 
     // check the received message's integrity
-    if (dataSize <= sizeof(DI_DriverMsgHdr)) {
+    if (dataSize <= sizeof(DIDO_DriverMsgHdr)) {
         return NULL;  // too short message
     }
     switch (msgHdr->requestCode) {
-    case DI_SET_CONFIG_AND_START:
-        if (msgHdr->messageLen != sizeof(DI_MsgSetConfig)) {
+    case DIDO_SET_CONFIG_AND_START:
+        if (msgHdr->messageLen != sizeof(DIDO_MsgSetConfig)) {
             return NULL;  // invalid length
         }
         break; 
-    case DI_PULSE_COUNT_RESET:
-        if (msgHdr->messageLen != sizeof(DI_MsgResetPulseCount)) {
+    case DIDO_PULSE_COUNT_RESET:
+        if (msgHdr->messageLen != sizeof(DIDO_MsgResetPulseCount)) {
             return NULL;  // invalid length
         }
         break;
-    case DI_READ_PULSE_COUNT:
-    case DI_READ_DUTY_SUM_TIME:
-    case DI_READ_PIN_LEVEL:
-        if (msgHdr->messageLen != sizeof(DI_MsgPinId)) {
+    case DIDO_READ_PULSE_COUNT:
+    case DIDO_READ_DUTY_SUM_TIME:
+    case DIDO_READ_PIN_LEVEL:
+        if (msgHdr->messageLen != sizeof(DIDO_MsgPinId)) {
             return NULL;  // invalid length
         }
         break;
-    case DI_READ_PULSE_LEVEL:
-    case DI_READ_VERSION:
+    case DIDO_READ_PULSE_LEVEL:
+    case DIDO_READ_VERSION:
         if (msgHdr->messageLen != 0) {
             return NULL;  // invalid length
         }

@@ -32,7 +32,7 @@
 #include <stdint.h>
 #endif
 
-#ifndef _DI_DRIVER_MSG_H_
+#ifndef _DIDO_DRIVER_MSG_H_
 #include "DIDODriveMsg.h"
 #endif
 
@@ -40,7 +40,7 @@
 extern bool	InterCoreComm_Initialize();
 
 // Wait and receive request from HLApp
-extern const DI_DriverMsg*	InterCoreComm_WaitAndRecvRequest();
+extern const DIDO_DriverMsg*	InterCoreComm_WaitAndRecvRequest();
 
 
 // Send response data to HLApp
