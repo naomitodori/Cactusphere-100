@@ -46,10 +46,10 @@
 #define NG	-1
 
 // DIDO gpio pin number/ID
-const int DIDOPIN_0 = 0;
-const int DIDOPIN_1 = 1;
-const int DIDOPIN_2 = 2;
-const int DIDOPIN_3 = 3;
+const int DIPIN_0 = 0;
+const int DIPIN_1 = 1;
+const int DOPIN_0 = 2;
+const int DOPIN_1 = 3;
 static const int periodMs = 1;  // 1[ms] (for polling DIn pin's input level) 
 static PulseCounter sPulseCounter[NUM_DIDO];
 
@@ -150,16 +150,16 @@ RTCoreMain(void)
         .baseAddr = 0x38010000,.type = GpioBlock_PWM,.firstPin = 0,.pinCount = 4
     };
     Mt3620_Gpio_AddBlock(&grp0);
-    Mt3620_Gpio_ConfigurePinForInput(DIDOPIN_0);
-    Mt3620_Gpio_ConfigurePinForInput(DIDOPIN_1);
-    Mt3620_Gpio_ConfigurePinForInput(DIDOPIN_2);
-    Mt3620_Gpio_ConfigurePinForInput(DIDOPIN_3);
+    Mt3620_Gpio_ConfigurePinForInput(DIPIN_0);
+    Mt3620_Gpio_ConfigurePinForInput(DIPIN_1);
+    Mt3620_Gpio_ConfigurePinForOutput(DOPIN_0);
+    Mt3620_Gpio_ConfigurePinForOutput(DOPIN_1);
 
     // initialize pulse counters and start the polling timer
-    PulseCounter_Initialize(&sPulseCounter[0], DIDOPIN_0);
-    PulseCounter_Initialize(&sPulseCounter[1], DIDOPIN_1);
-    PulseCounter_Initialize(&sPulseCounter[2], DIDOPIN_2);
-    PulseCounter_Initialize(&sPulseCounter[3], DIDOPIN_3);
+    PulseCounter_Initialize(&sPulseCounter[0], DIPIN_0);
+    PulseCounter_Initialize(&sPulseCounter[1], DIPIN_1);
+    PulseCounter_Initialize(&sPulseCounter[2], DOPIN_0);
+    PulseCounter_Initialize(&sPulseCounter[3], DOPIN_1);
     Gpt_LaunchTimerMs(TimerGpt1, periodMs, Handle1msIrq);
 
     // main loop

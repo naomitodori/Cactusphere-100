@@ -37,7 +37,7 @@ enum {
     DIDO_READ_DUTY_SUM_TIME   = 4,  // read the time integration of pulse
     DIDO_READ_PULSE_LEVEL     = 5,  // read the input level of all DIDO pin
     DIDO_READ_PIN_LEVEL       = 6,  // read the input level of specific DIDO pin
-    DO_WRITE_PIN_LEVEL      = 7,  // write the output level of specific DO pin
+    DO_WRITE_PIN_LEVEL        = 7,  // write the output level of specific DO pin
     DIDO_READ_VERSION         = 255,// read the RTApp version
 };
 
