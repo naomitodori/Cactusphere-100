@@ -124,6 +124,11 @@ static volatile sig_atomic_t exitCode = ExitCode_Success;
 #define USE_MODBUS
 #endif // PRODUCT_ATMARK_TECHNO_RS485
 
+#if (APP_PRODUCT_ID == PRODUCT_ATMARK_TECHNO_DIDO)
+#define USE_DIDO
+#define DIDO_PORT_OFFSET 1
+#endif // PRODUCT_ATMARK_TECHNO_DIN
+
 #ifdef USE_MODBUS
 #include "ModbusConfigMgr.h"
 #include "ModbusFetchConfig.h"
@@ -143,6 +148,14 @@ static volatile sig_atomic_t exitCode = ExitCode_Success;
 #include "DI_WatchConfig.h"
 #include "LibDI.h"
 #endif  // USE_DI
+
+#ifdef USE_DIDO
+#include "DIDO_ConfigMgr.h"
+#include "DIDO_DataFetchScheduler.h"
+#include "DIDO_FetchConfig.h"
+#include "DIDO_WatchConfig.h"
+#include "LibDIDO.h"
+#endif  // USE_DIDO
 
 static int ct_error = 0;
 
@@ -307,6 +320,10 @@ int main(int argc, char *argv[])
     mTelemetrySchedulerArr[DIGITAL_IN] = Factory_CreateScheduler(DIGITAL_IN);
     DI_ConfigMgr_Initialize();
 #endif  // USE_DI
+#ifdef USE_DIDO
+    mTelemetrySchedulerArr[DIGITAL_IN] = Factory_CreateScheduler(DIGITAL_IN);
+    DIDO_ConfigMgr_Initialize();
+#endif  // USE_DIDO
 
     TelemetryItems_InitDictionary();
     SendRTApp_InitHandlers();
@@ -362,6 +379,10 @@ int main(int argc, char *argv[])
 #ifdef USE_DI
     DI_ConfigMgr_Cleanup();
 #endif  // USE_DI
+
+#ifdef USE_DIDO
+    DIDO_ConfigMgr_Cleanup();
+#endif  // USE_DIDO
 
     for (int i = 0; i < MAX_SCHEDULER_NUM; i++) {
         DataFetchScheduler* scheduler = mTelemetrySchedulerArr[i];
@@ -860,6 +881,8 @@ static void HubConnectionStatusCallback(IOTHUB_CLIENT_CONNECTION_STATUS result,
             ret = DI_Lib_ReadRTAppVersion(rtAppVersion);
 #elif defined USE_MODBUS
             ret = Libmodbus_GetRTAppVersion(rtAppVersion);
+#if defined USE_DIDO
+            ret = DIDO_Lib_ReadRTAppVersion(rtAppVersion);
 #endif
             if (ret) {
                 snprintf(propertyStr, sizeof(propertyStr), EventMsgTemplate, "RTAppVersion", rtAppVersion);
@@ -1238,6 +1261,47 @@ static void TwinCallback(DEVICE_TWIN_UPDATE_STATE updateState, const unsigned ch
     }
 
 #endif  // USE_DI
+
+#ifdef USE_DIDO
+    SphereWarning err = DIDO_ConfigMgr_LoadAndApplyIfChanged(payload, payloadSize, Send_PropertyItem);
+    if (defupderr && err == UNSUPPORTED_PROPERTY) {
+        err = NO_ERROR;
+    }
+    switch (err)
+    {
+    case NO_ERROR:
+    case ILLEGAL_PROPERTY:
+        DIDO_DataFetchScheduler_Init(
+            mTelemetrySchedulerArr[DIGITAL_IN], //TODO
+            DIDO_FetchConfig_GetFetchItemPtrs(DIDO_ConfigMgr_GetFetchConfig()),
+            DIDO_WatchConfig_GetFetchItems(DIDO_ConfigMgr_GetWatchConfig()));
+        SendPropertyResponse(Send_PropertyItem);
+
+        if (err == NO_ERROR) {
+            gLedState = LED_ON;
+        } else { // ILLEGAL_PROPERTY
+            // do not set ct_error and exitCode,
+            // as it won't hang with this error.
+            Log_Debug("ERROR: Receive illegal property.\n");
+            gLedState = LED_BLINK;
+            cactusphere_error_notify(err);
+        }
+        break;
+    case ILLEGAL_DESIRED_PROPERTY:
+        Log_Debug("ERROR: Receive illegal desired property.\n");
+        ct_error = -(int)err;
+        break;
+    case UNSUPPORTED_PROPERTY:
+        Log_Debug("ERROR: Receive unsupported property.\n");
+        ct_error = -(int)err;
+        break;
+
+    default:
+        break;
+    }
+
+#endif  // USE_DIDO
+
     vector_destroy(Send_PropertyItem);
 
     if (ct_error < 0) {
@@ -1326,6 +1390,60 @@ err:
     IoT_CentralLib_SendProperty(reportedPropertiesString);
 
 #endif  // USE_DI
+
+#ifdef USE_DIDO
+    const char ClearCounterDIDOKey[] = "ClearCounter_DIDO";
+    const size_t ClearCounterDiLen = strlen(ClearCounterDIDOKey);
+    static const char* ReportMsgTemplate = "{ \"ClearCounterResult_DIDO%d\": \"%s\" }";
+
+    if (0 == strncmp(method_name, ClearCounterDIDOKey, ClearCounterDiLen)) {
+        int pinId = strtol(&method_name[ClearCounterDiLen], NULL, 10) - DIDO_PORT_OFFSET;
+        if (pinId < 0) {
+            goto err;
+        }
+
+        if (0 != strncmp(payload, "null", strlen("null"))) {
+            char *cmdPayload = (char *)calloc(size + 1, sizeof(char));
+            if (NULL == cmdPayload) {
+                goto err;
+            }
+            strncpy(cmdPayload, payload, size);
+            uint64_t initVal = strtoull(cmdPayload, NULL, 10);
+
+            if (initVal > 0x7FFFFFFF) {
+                free(cmdPayload);
+                goto err_value;
+            }
+            if (!DIDO_Lib_ResetPulseCount((unsigned long)pinId, (unsigned long)initVal)) {
+                Log_Debug("DIDO_Lib_ResetPulseCount() error");
+                strcpy(deviceMethodResponse, "\"Reset Error\"");
+                snprintf(reportedPropertiesString, sizeof(reportedPropertiesString), ReportMsgTemplate, pinId + DIDO_PORT_OFFSET, "Reset Error");
+            } else {
+                strcpy(deviceMethodResponse, "\"Success\"");
+                snprintf(reportedPropertiesString, sizeof(reportedPropertiesString), ReportMsgTemplate, pinId + DIDO_PORT_OFFSET, "Success");
+            }
+
+            free(cmdPayload);
+        } else {
+err_value:
+            //init value error
+            strcpy(deviceMethodResponse, "\"Illegal init value\"");
+            snprintf(reportedPropertiesString, sizeof(reportedPropertiesString), ReportMsgTemplate, pinId + DIDO_PORT_OFFSET, "Illegal init value");
+        }
+    } else {
+err:
+        strcpy(deviceMethodResponse, "\"Error\"");
+    }
+
+    // send result
+    *response_size = strlen(deviceMethodResponse);
+    *response = malloc(*response_size);
+    if (NULL != response) {
+        (void)memcpy(*response, deviceMethodResponse, *response_size);
+    }
+    IoT_CentralLib_SendProperty(reportedPropertiesString);
+
+#endif  // USE_DIDO
 end:
     return 200;
 }

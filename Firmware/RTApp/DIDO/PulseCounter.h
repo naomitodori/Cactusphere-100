@@ -43,10 +43,26 @@ typedef struct PulseCounter {
     bool        isCountHight;      // whether settlement as pulse when high(:1) or low(:0) level
     bool        prevState;         // previous state of the DIn pin
     bool        currentState;      // state of the DIn pin (After chattering control)
+    bool        setState;          // next state of DO pin
     bool        isSetPulse;        // is settlement have done
     bool        isRising;          // is DIn level rised
     bool        isStart;           // is this counter running
 } PulseCounter;
+
+// 仮↓
+
+typedef struct FunctionStandAlone {
+    bool        DriveState;         // a
+    int         DriveTime;          // a
+    int         PWMDutyCycle;       // a    
+} FunctionStandAlone;
+
+typedef struct FunctionCombination {
+    int         CombinationPort;    // a
+    int         DIEdgeTrigger;      // a
+    int         PulseCycle;         // a
+    int         PulseDutyCycle;     // a
+} FunctionCombination;
 
 // Initialization
 extern void PulseCounter_Initialize(PulseCounter* me, int pin);

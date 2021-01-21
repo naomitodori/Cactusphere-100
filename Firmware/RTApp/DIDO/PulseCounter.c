@@ -113,6 +113,12 @@ PulseCounter_GetPinLevel(PulseCounter* me)
     return me->currentState;
 }
 
+int 
+PulseCounter_SetPinLevel(PulseCounter* me)
+{
+    return Mt3620_Gpio_Write(me->pinId, me->setState);
+}
+
 //
 // Handle polling based pulse counting task
 //

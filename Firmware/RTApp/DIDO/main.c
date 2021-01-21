@@ -251,7 +251,7 @@ RTCoreMain(void)
                     InterCoreComm_SendIntValue(NG);
                     continue;
                 }
-                val = (int)PulseCounter_GetPinLevel(targetP);
+                val = (int)PulseCounter_SetPinLevel(targetP);
 
                 if (InterCoreComm_SendIntValue(val)) {
 //                    int i = 0;
