@@ -50,7 +50,7 @@ const int DIPIN_0 = 0;
 const int DIPIN_1 = 1;
 const int DOPIN_0 = 2;
 const int DOPIN_1 = 3;
-static const int periodMs = 1;  // 1[ms] (for polling DIn pin's input level) 
+static const int periodMs = 1;  // 1[ms] (for polling DIn pin's input level)
 static PulseCounter sPulseCounter[NUM_DIDO];
 
 

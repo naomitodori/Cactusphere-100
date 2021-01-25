@@ -54,7 +54,7 @@ typedef struct PulseCounter {
 typedef struct FunctionStandAlone {
     bool        DriveState;         // a
     int         DriveTime;          // a
-    int         PWMDutyCycle;       // a    
+    int         PWMDutyCycle;       // a
 } FunctionStandAlone;
 
 typedef struct FunctionCombination {
