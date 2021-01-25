@@ -14,7 +14,7 @@
             "environment": [],
             "externalConsole": true,
             "targetCore": "RTCore",
-            "partnerComponents": ["a7a778a1-9f0e-4c2c-866b-d9f42e8c00b0"],
+            "partnerComponents": ["0623bac2-dc05-ba31-2abb-ac4f805d6464"],
             "MIMode": "gdb",
             "setupCommands": [
                 {
