@@ -43,10 +43,23 @@ typedef struct PulseCounter {
     bool        isCountHight;      // whether settlement as pulse when high(:1) or low(:0) level
     bool        prevState;         // previous state of the DIn pin
     bool        currentState;      // state of the DIn pin (After chattering control)
-    bool        setState;          // next state of DO pin
     bool        isSetPulse;        // is settlement have done
     bool        isRising;          // is DIn level rised
     bool        isStart;           // is this counter running
+    bool        defaultState;          // next state of DO pin
+    bool        driveState;          // next state of DO pin
+    bool        immediateFlag;      // Do immediate
+    int         driveTime;
+    int         driveElapsedTime;
+    bool        driveCertainEnable;
+    int         delayTime;
+    int         delayElapsedTime;
+    bool        delayEnable;
+    bool        triggerActived;
+    bool        flagDriveTime;
+    bool        flagDelay;
+    bool        flagA;
+    bool        flagB;
 } PulseCounter;
 
 // 仮↓

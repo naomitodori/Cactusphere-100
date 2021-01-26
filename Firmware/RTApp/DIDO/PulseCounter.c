@@ -162,3 +162,36 @@ PulseCounter_Counter(PulseCounter* me)
         }
     }
 }
+
+void
+dido_tmp_move(PulseCounter* me) {
+    if (me->triggerActived == true) {
+        if (me->delayEnable == true) {
+            me->flagDelay = true;
+            me->delayElapsedTime = 0;
+        } else {
+            Mt3620_Gpio_Write(me->pinId, me->driveState);
+        }
+        if (me->driveCertainEnable == true) {
+            me->flagDriveTime = true;
+            me->driveElapsedTime = 0;
+        }
+        me->triggerActived = false;
+    }
+    if (me->flagDelay == true) {
+        if (me->delayElapsedTime >= me->delayTime) {
+            Mt3620_Gpio_Write(me->pinId, me->driveState);
+            me->flagDelay = false;
+        } else {
+            me->delayElapsedTime++;
+        }
+    }
+    if (me->flagDriveTime == true) {
+        if (me->driveElapsedTime >= me->driveTime) {
+            Mt3620_Gpio_Write(me->pinId, me->defaultState);
+            me->flagDriveTime = false;
+        } else {
+            me->driveElapsedTime++;
+        }
+    }
+}
