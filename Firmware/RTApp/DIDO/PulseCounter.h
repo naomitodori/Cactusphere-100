@@ -32,6 +32,12 @@
 #include <stdint.h>
 #endif
 
+typedef enum {
+    FunctionType_NotSelected,
+    FunctionType_Single,
+    FunctionType_Relation
+} FunctionType;
+
 typedef struct PulseCounter {
     int         pinId;             // DIn pin number
     int         pulseCounter;      // pulse counter value
