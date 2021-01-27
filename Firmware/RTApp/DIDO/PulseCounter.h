@@ -38,6 +38,16 @@ typedef enum {
     FunctionType_Relation
 } FunctionType;
 
+typedef enum {
+    RelationType_NotSelected,
+    RelationType_Drive,
+    RelationType_Interlock,
+    RelationType_Invert,
+    RelationType_Snap,
+    RelationType_Pulse,
+    RelationType_PWM
+} RelationType;
+
 typedef struct PulseCounter {
     int         pinId;             // DIn pin number
     int         pulseCounter;      // pulse counter value
@@ -66,6 +76,9 @@ typedef struct PulseCounter {
     bool        flagDelay;
     bool        flagA;
     bool        flagB;
+    FunctionType functionType;
+    RelationType relationType;
+    int         relationPort;
 } PulseCounter;
 
 // 仮↓

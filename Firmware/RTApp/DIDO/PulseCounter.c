@@ -116,7 +116,7 @@ PulseCounter_GetPinLevel(PulseCounter* me)
 int 
 PulseCounter_SetPinLevel(PulseCounter* me)
 {
-    return Mt3620_Gpio_Write(me->pinId, me->setState);
+    return Mt3620_Gpio_Write(me->pinId, me->driveState);
 }
 
 //
@@ -165,6 +165,8 @@ PulseCounter_Counter(PulseCounter* me)
 
 void
 dido_tmp_move(PulseCounter* me) {
+    bool newState;
+
     if (me->triggerActived == true) {
         if (me->delayEnable == true) {
             me->flagDelay = true;
@@ -180,7 +182,6 @@ dido_tmp_move(PulseCounter* me) {
     }
     if (me->flagDelay == true) {
         if (me->delayElapsedTime >= me->delayTime) {
-            Mt3620_Gpio_Write(me->pinId, me->driveState);
             me->flagDelay = false;
         } else {
             me->delayElapsedTime++;
@@ -192,6 +193,37 @@ dido_tmp_move(PulseCounter* me) {
             me->flagDriveTime = false;
         } else {
             me->driveElapsedTime++;
+        }
+    }
+    if (me->functionType == FunctionType_Relation) {
+        if (me->functionType == FunctionType_Relation) {
+            switch (me->relationType)
+            {
+            case RelationType_Drive:
+                Mt3620_Gpio_Write(me->pinId, me->driveState);
+                break;
+            case RelationType_Interlock:
+                Mt3620_Gpio_Read(me->relationPort, &newState);
+                Mt3620_Gpio_Write(me->pinId, newState);
+                break;
+            case RelationType_Invert:
+                Mt3620_Gpio_Read(me->relationPort, &newState);
+                Mt3620_Gpio_Write(me->pinId, !newState);
+                break;
+            case RelationType_Snap:
+                /* code */
+                break;
+            case RelationType_Pulse:
+                /* code */
+                break;
+            case RelationType_PWM:
+                /* code */
+                break;
+            default:
+                break;
+            }
+        } else {
+            Mt3620_Gpio_Write(me->pinId, me->driveState);
         }
     }
 }
