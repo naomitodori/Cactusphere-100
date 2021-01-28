@@ -171,8 +171,6 @@ dido_tmp_move(PulseCounter* me) {
         if (me->delayEnable == true) {
             me->flagDelay = true;
             me->delayElapsedTime = 0;
-        } else {
-            Mt3620_Gpio_Write(me->pinId, me->driveState);
         }
         if (me->driveCertainEnable == true) {
             me->flagDriveTime = true;
@@ -180,22 +178,16 @@ dido_tmp_move(PulseCounter* me) {
         }
         me->triggerActived = false;
     }
+
+
     if (me->flagDelay == true) {
         if (me->delayElapsedTime >= me->delayTime) {
             me->flagDelay = false;
         } else {
             me->delayElapsedTime++;
         }
-    }
-    if (me->flagDriveTime == true) {
-        if (me->driveElapsedTime >= me->driveTime) {
-            Mt3620_Gpio_Write(me->pinId, me->defaultState);
-            me->flagDriveTime = false;
-        } else {
-            me->driveElapsedTime++;
-        }
-    }
-    if (me->functionType == FunctionType_Relation) {
+    } else if (me->driveCertainEnable == false ||
+              (me->driveCertainEnable == true && me->flagDriveTime == true)) {
         if (me->functionType == FunctionType_Relation) {
             switch (me->relationType)
             {
@@ -222,8 +214,16 @@ dido_tmp_move(PulseCounter* me) {
             default:
                 break;
             }
-        } else {
+        } else if (me->functionType == FunctionType_Single) {
             Mt3620_Gpio_Write(me->pinId, me->driveState);
+        }
+        if (me->flagDriveTime == true) {
+            if (me->driveElapsedTime >= me->driveTime) {
+                Mt3620_Gpio_Write(me->pinId, me->defaultState);
+                me->flagDriveTime = false;
+            } else {
+                me->driveElapsedTime++;
+            }
         }
     }
 }
