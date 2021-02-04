@@ -164,7 +164,7 @@ PulseCounter_Counter(PulseCounter* me)
 }
 
 void
-dido_tmp_move(PulseCounter* me) {
+dido_tmp_move(DoTmpStruct* me) {
     bool newState;
 
     if (me->triggerActived == true) {
@@ -206,7 +206,8 @@ dido_tmp_move(PulseCounter* me) {
                 /* code */
                 break;
             case RelationType_Pulse:
-                /* code */
+                PWM_ConfigurePin(me->pinId, me->pulseClock,
+                 me->pulseEffectiveTime, me->pulsePeriod - me->pulseEffectiveTime);
                 break;
             case RelationType_PWM:
                 /* code */

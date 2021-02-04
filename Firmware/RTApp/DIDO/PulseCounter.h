@@ -48,6 +48,23 @@ typedef enum {
     RelationType_PWM
 } RelationType;
 
+typedef enum {
+    RelationTrigger_None,
+    RelationTrigger_Always,
+    RelationTrigger_Edge,
+    RelationTrigger_,
+    RelationTrigger_,
+    RelationTrigger_,
+    RelationTrigger_,
+} RelationTrigger;
+
+typedef enum {
+    PulseClock_None = 0,
+    PulseClock_32KHz = 32768,
+    PulseClock_2MHz = 2000000,
+    PulseClock_XTAL = 26000000
+} PulseClock;
+
 typedef struct PulseCounter {
     int         pinId;             // DIn pin number
     int         pulseCounter;      // pulse counter value
@@ -81,6 +98,32 @@ typedef struct PulseCounter {
     int         relationPort;
 } PulseCounter;
 
+typedef struct DoTmpStruct
+{
+    int         pinId;              // DOut pin number
+    bool        defaultState;       // default state of DO pin
+    bool        driveState;         // next state of DO pin
+    bool        immediateFlag;      // Do immediate
+    int         driveTime;
+    int         driveElapsedTime;
+    bool        driveCertainEnable;
+    int         delayTime;
+    int         delayElapsedTime;
+    bool        delayEnable;
+    bool        triggerActived;
+    bool        flagDriveTime;
+    bool        flagDelay;
+    int         pulseEffectiveTime;
+    int         pulsePeriod;
+    PulseClock  pulseClock;
+    bool        flagA;
+    bool        flagB;
+    FunctionType functionType;
+    RelationType relationType;
+    int         relationPort;
+} DoTmpStruct;
+
+
 // 仮↓
 
 typedef struct FunctionStandAlone {
@@ -113,5 +156,8 @@ extern bool PulseCounter_GetPinLevel(PulseCounter* me);
 
 // Handle polling based pulse counting task
 extern void PulseCounter_Counter(PulseCounter* me);
+
+//DIDO
+dido_tmp_move(DoTmpStruct* me)
 
 #endif  // _PULSE_COUNTER_H_
