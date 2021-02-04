@@ -25,6 +25,7 @@
 #include "PulseCounter.h"
 
 #include "mt3620-gpio.h"
+#include "libpwm/GPIO.h"
 
 //
 // Initialization
@@ -217,6 +218,12 @@ dido_tmp_move(DoTmpStruct* me) {
             }
         } else if (me->functionType == FunctionType_Single) {
             Mt3620_Gpio_Write(me->pinId, me->driveState);
+        } else if (me->functionType == FunctionType_Pulse) {
+            if (me->pulseStatus == PulseStatus_Enable) {
+                PWM_ConfigurePin(me->pinId, me->pulseClock,
+                 me->pulseEffectiveTime, me->pulsePeriod - me->pulseEffectiveTime);
+                me->pulseStatus == PulseStatus_Started;
+            }
         }
         if (me->flagDriveTime == true) {
             if (me->driveElapsedTime >= me->driveTime) {

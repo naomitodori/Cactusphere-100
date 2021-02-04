@@ -35,6 +35,7 @@
 typedef enum {
     FunctionType_NotSelected,
     FunctionType_Single,
+    FunctionType_Pulse,
     FunctionType_Relation
 } FunctionType;
 
@@ -64,6 +65,14 @@ typedef enum {
     PulseClock_2MHz = 2000000,
     PulseClock_XTAL = 26000000
 } PulseClock;
+
+typedef enum {
+    PulseStatus_None,
+    PulseStatus_Enable,
+    PulseStatus_Started,
+    PulseStatus_Disable,
+    PulseStatus_Test
+} PulseStatus;
 
 typedef struct PulseCounter {
     int         pinId;             // DIn pin number
@@ -116,6 +125,7 @@ typedef struct DoTmpStruct
     int         pulseEffectiveTime;
     int         pulsePeriod;
     PulseClock  pulseClock;
+    PulseStatus pulseStatus;
     bool        flagA;
     bool        flagB;
     FunctionType functionType;
