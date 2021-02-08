@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef _DIDO_WATCHER_H_
-#define _DIDO_WATCHER_H_
+#ifndef _DIO_FETCH_CONFIG_H_
+#define _DIO_FETCH_CONFIG_H_
 
 #ifndef _STDBOOL_H
 #include <stdbool.h>
@@ -33,23 +33,29 @@
 #include <vector.h>
 #endif
 
-typedef struct DIDO_WatchItem	DIDO_WatchItem;
-typedef struct DIDO_Watcher	DIDO_Watcher;
+#include "DIO_PropertyItem.h"
 
-// status of contact input monitoring target
-typedef struct DIDO_WatchItemStat {
-    const DIDO_WatchItem*	watchItem;  // watching specification
-    unsigned long	prevPulseCount; // previous counter value
-    unsigned long	currPulseCount; // last counter value
-} DIDO_WatchItemStat;
+typedef struct DIO_FetchConfig	DIO_FetchConfig;
+typedef struct _json_value	json_value;
+
+#ifndef NUM_DIO
+#define NUM_DIO 2
+#endif
 
 // Initialization and cleanup
-extern DIDO_Watcher*	DIDO_Watcher_New(void);
-extern void	DIDO_Watcher_Init(DIDO_Watcher* me, vector watchItems);
-extern void	DIDO_Watcher_Destroy(DIDO_Watcher* me);
+extern DIO_FetchConfig*	DIO_FetchConfig_New(void);
+extern void	DIO_FetchConfig_Destroy(DIO_FetchConfig* me);
 
-// Check update
-extern bool	DIDO_Watcher_DoWatch(DIDO_Watcher* me);
-extern const vector	DIDO_Watcher_GetLastChanges(DIDO_Watcher* me);
+// Load DIO pulse conter configuration from JSON
+extern bool DIO_FetchConfig_LoadFromJSON(DIO_FetchConfig* me, DIO_PropertyData* data,
+    const json_value* json, vector propertyItem, const char* version);
 
-#endif  // _DIDO_WATCHER_H_
+// Get configuration of DIO pulse conters
+extern vector	DIO_FetchConfig_GetFetchItems(DIO_FetchConfig* me);
+extern vector	DIO_FetchConfig_GetFetchItemPtrs(DIO_FetchConfig* me);
+
+// Get enable port number of DIDO pulse counter
+extern int DIO_FetchConfig_GetFetchEnablePorts(DIO_FetchConfig* me,
+    bool* counterStatus, bool* pollingStatus);
+
+#endif  // _DIO_FETCH_CONFIG_H_

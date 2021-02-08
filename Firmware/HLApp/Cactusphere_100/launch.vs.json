@@ -34,7 +34,7 @@
     },
     {
       "type": "azurespheredbg",
-      "name": "GDB (AtmarkTechno_DIDO)",
+      "name": "GDB (AtmarkTechno_DIO)",
       "project": "CMakeLists.txt",
       "inheritEnvironments": [
         "AzureSphere"

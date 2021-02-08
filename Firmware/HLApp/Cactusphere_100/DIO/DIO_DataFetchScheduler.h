@@ -22,36 +22,15 @@
  * THE SOFTWARE.
  */
 
-#ifndef _DIDO_WATCH_CONFIG_H_
-#define _DIDO_WATCH_CONFIG_H_
+#ifndef _DIO_DATA_FETCH_SCHEDULER_H_
+#define _DIO_DATA_FETCH_SCHEDULER_H_
 
-#ifndef _STDBOOL_H
-#include <stdbool.h>
+#ifndef _DATA_FETCH_SCHEDULER_H_
+#include <DataFetchScheduler.h>
 #endif
 
-#ifndef CONTAINERS_VECTOR_H
-#include <vector.h>
-#endif
+extern DataFetchScheduler* DIO_DataFetchScheduler_New(void);
+extern void	DIO_DataFetchScheduler_Init(DataFetchScheduler* me,
+    vector fetchItemPtrs, vector watchItems);
 
-typedef struct DIDO_WatchConfig	DIDO_WatchConfig;
-typedef struct _json_value	json_value;
-
-#ifndef NUM_DIDO
-#define NUM_DIDO 4
-#endif
-
-// Initialization and cleanup
-extern DIDO_WatchConfig*	DIDO_WatchConfig_New(void);
-extern void	DIDO_WatchConfig_Destroy(DIDO_WatchConfig* me);
-
-// Load DIDO contact input watcher configuration from JSON
-extern bool	DIDO_WatchConfig_LoadFromJSON(DIDO_WatchConfig* me,
-    const json_value* json, bool desire, vector propertyItem, const char* version);
-
-// Get configuration of DIDO contact input watchers
-extern vector	DIDO_WatchConfig_GetFetchItems(DIDO_WatchConfig* me);
-
-// Get enable port number of DIDO contact input
-int DIDO_WatchConfig_GetWatchEnablePorts(DIDO_WatchConfig* me, bool* status);
-
-#endif  // _DIDO_WATCH_CONFIG_H_
+#endif  // _DIO_DATA_FETCH_SCHEDULER_H_

@@ -6,7 +6,7 @@
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "${command:azuresphere.AzureSphereSdkDir}/CMakeFiles/AzureSphereToolchain.cmake",
         "AZURE_SPHERE_TARGET_API_SET": "latest-lts",
-        "PRODUCT": "atmarktechno_DIDO_model",
+        "PRODUCT": "atmarktechno_DIO_model",
     },
     "cmake.configureOnOpen": true,
     "cmake.sourceDirectory": "${workspaceFolder}/../",

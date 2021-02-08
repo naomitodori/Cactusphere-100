@@ -22,38 +22,26 @@
  * THE SOFTWARE.
  */
 
-#ifndef _DIDO_FETCH_CONFIG_H_
-#define _DIDO_FETCH_CONFIG_H_
+#ifndef _DIO_FETCH_ITEM_H_
+#define _DIO_FETCH_ITEM_H_
+
+#ifndef _FETCH_ITEM_BASE_H_
+#include <FetchItemBase.h>
+#endif
 
 #ifndef _STDBOOL_H
 #include <stdbool.h>
 #endif
 
-#ifndef CONTAINERS_VECTOR_H
-#include <vector.h>
-#endif
+typedef struct DIO_FetchItem {
+    char        telemetryName[TELEMETRY_NAME_MAX_LEN + 1];  // telemetry name
+    uint32_t    intervalSec;    // periodic acquisition interval (in seconds)
+    uint32_t    pinID;          // pin ID
+    bool        isPulseCounter; // pulse counter(true) / polling(false)
+    bool        isCountClear;   // whether to clear the counter
+    bool        isPulseHigh;    // whether settlement as pulse when high(:1) or low(:0) level
+    uint32_t    minPulseWidth;  // minimum length for settlement as pulse
+    uint32_t    maxPulseCount;  // max pulse counter value
+} DIO_FetchItem;
 
-typedef struct DIDO_FetchConfig	DIDO_FetchConfig;
-typedef struct _json_value	json_value;
-
-#ifndef NUM_DIDO
-#define NUM_DIDO 4
-#endif
-
-// Initialization and cleanup
-extern DIDO_FetchConfig*	DIDO_FetchConfig_New(void);
-extern void	DIDO_FetchConfig_Destroy(DIDO_FetchConfig* me);
-
-// Load DIDO pulse conter configuration from JSON
-extern bool	DIDO_FetchConfig_LoadFromJSON(DIDO_FetchConfig* me,
-    const json_value* json, bool desire, vector propertyItem, const char* version);
-
-// Get configuration of DIDO pulse conters
-extern vector	DIDO_FetchConfig_GetFetchItems(DIDO_FetchConfig* me);
-extern vector	DIDO_FetchConfig_GetFetchItemPtrs(DIDO_FetchConfig* me);
-
-// Get enable port number of DIDO pulse counter
-extern int DIDO_FetchConfig_GetFetchEnablePorts(DIDO_FetchConfig* me,
-    bool* counterStatus, bool* pollingStatus);
-
-#endif  // _DIDO_FETCH_CONFIG_H_
+#endif  // _DIO_FETCH_ITEM_H

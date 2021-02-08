@@ -22,15 +22,34 @@
  * THE SOFTWARE.
  */
 
-#ifndef _DIDO_DATA_FETCH_SCHEDULER_H_
-#define _DIDO_DATA_FETCH_SCHEDULER_H_
+#ifndef _DIO_WATCHER_H_
+#define _DIO_WATCHER_H_
 
-#ifndef _DATA_FETCH_SCHEDULER_H_
-#include <DataFetchScheduler.h>
+#ifndef _STDBOOL_H
+#include <stdbool.h>
 #endif
 
-extern DataFetchScheduler* DIDO_DataFetchScheduler_New(void);
-extern void	DIDO_DataFetchScheduler_Init(DataFetchScheduler* me,
-    vector fetchItemPtrs, vector watchItems);
+#ifndef CONTAINERS_VECTOR_H
+#include <vector.h>
+#endif
 
-#endif  // _DIDO_DATA_FETCH_SCHEDULER_H_
+typedef struct DIO_WatchItem	DIO_WatchItem;
+typedef struct DIO_Watcher	DIO_Watcher;
+
+// status of contact input monitoring target
+typedef struct DIO_WatchItemStat {
+    const DIO_WatchItem*	watchItem;  // watching specification
+    unsigned long	prevPulseCount; // previous counter value
+    unsigned long	currPulseCount; // last counter value
+} DIO_WatchItemStat;
+
+// Initialization and cleanup
+extern DIO_Watcher*	DIO_Watcher_New(void);
+extern void	DIO_Watcher_Init(DIO_Watcher* me, vector watchItems);
+extern void	DIO_Watcher_Destroy(DIO_Watcher* me);
+
+// Check update
+extern bool	DIO_Watcher_DoWatch(DIO_Watcher* me);
+extern const vector	DIO_Watcher_GetLastChanges(DIO_Watcher* me);
+
+#endif  // _DIO_WATCHER_H_

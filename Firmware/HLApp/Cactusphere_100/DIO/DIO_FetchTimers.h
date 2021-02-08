@@ -22,25 +22,15 @@
  * THE SOFTWARE.
  */
 
-#ifndef _DIDO_WATCHITEM_H_
-#define _DIDO_WATCHITEM_H_
+#ifndef _DIO_FETCH_TIMERS_H_
+#define _DIO_FETCH_TIMERS_H_
 
-#ifndef _STDBOOL_H
-#include <stdbool.h>
-#endif
-#ifndef _STDIDONT_H
-#include <stdint.h>
+#ifndef _FETCH_TIMERS_H_
+#include <FetchTimers.h>
 #endif
 
-#ifndef TELEMETRY_NAME_MAX_LEN
-#define TELEMETRY_NAME_MAX_LEN	32
-#endif
+// Initialization
+extern void	DIO_FetchTimers_InitForTimer(
+    FetchTimers* me, FetchItemBase* fetchItem);
 
-typedef struct DIDO_WatchItem {
-    char        telemetryName[TELEMETRY_NAME_MAX_LEN + 1];  // telemetry name
-    uint32_t    pinID;                  // pin ID
-    bool        notifyChangeForHigh;   // whether the input's normal level isn't high
-    bool        isCountClear;          // whether to clear the counter
-} DIDO_WatchItem;
-
-#endif  // _DIDO_WATCHITEM_H_
+#endif  // _DIO_FETCH_TIMERS_H_

@@ -22,26 +22,25 @@
  * THE SOFTWARE.
  */
 
-#ifndef _DIDO_FETCH_ITEM_H_
-#define _DIDO_FETCH_ITEM_H_
-
-#ifndef _FETCH_ITEM_BASE_H_
-#include <FetchItemBase.h>
-#endif
+#ifndef _DIO_WATCHITEM_H_
+#define _DIO_WATCHITEM_H_
 
 #ifndef _STDBOOL_H
 #include <stdbool.h>
 #endif
+#ifndef _STDIDONT_H
+#include <stdint.h>
+#endif
 
-typedef struct DIDO_FetchItem {
+#ifndef TELEMETRY_NAME_MAX_LEN
+#define TELEMETRY_NAME_MAX_LEN	32
+#endif
+
+typedef struct DIO_WatchItem {
     char        telemetryName[TELEMETRY_NAME_MAX_LEN + 1];  // telemetry name
-    uint32_t    intervalSec;    // periodic acquisition interval (in seconds)
-    uint32_t    pinID;          // pin ID
-    bool        isPulseCounter; // pulse counter(true) / polling(false)
-    bool        isCountClear;   // whether to clear the counter
-    bool        isPulseHigh;    // whether settlement as pulse when high(:1) or low(:0) level
-    uint32_t    minPulseWidth;  // minimum length for settlement as pulse
-    uint32_t    maxPulseCount;  // max pulse counter value
-} DIDO_FetchItem;
+    uint32_t    pinID;                  // pin ID
+    bool        notifyChangeForHigh;   // whether the input's normal level isn't high
+    bool        isCountClear;          // whether to clear the counter
+} DIO_WatchItem;
 
-#endif  // _DIDO_FETCH_ITEM_H
+#endif  // _DIO_WATCHITEM_H_

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 1,
-  "Name": "DIDO_HLApp_Cactusphere_100",
+  "Name": "DIO_HLApp_Cactusphere_100",
   "ComponentId": "0623bac2-dc05-ba31-2abb-ac4f805d6464",
   "EntryPoint": "/bin/app",
   "CmdArgs": [  ],
@@ -8,7 +8,7 @@
     "AllowedConnections": [
       "global.azure-devices-provisioning.net"
     ],
-    "Gpio": [ "$MT3620_GPIO8" ],
+    "Gpio": [ "$MT3620_GPIO23" ],
     "I2cMaster": [ "$MT3620_ISU1_I2C" ],
     "DeviceAuthentication": "00000000-0000-0000-0000-000000000000",
     "AllowedApplicationConnections": [ "fe77a0a0-531f-10f1-1759-28c40ed592a8" ],

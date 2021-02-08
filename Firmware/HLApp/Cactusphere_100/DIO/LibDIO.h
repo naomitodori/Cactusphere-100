@@ -22,26 +22,37 @@
  * THE SOFTWARE.
  */
 
-#ifndef _DIDO_FETCH_TARGETS_H_
-#define _DIDO_FETCH_TARGETS_H_
+#ifndef _LIB_DIO_H_
+#define _LIB_DIO_H_
 
-#ifndef CONTAINERS_VECTOR_H
-#include <vector.h>
-#endif
+#include <stdbool.h>
 
-typedef struct DIDO_FetchTargets	DIDO_FetchTargets;
-typedef struct DIDO_FetchItem	DIDO_FetchItem;
+#define NUM_DIO	2
 
 // Initialization and cleanup
-extern DIDO_FetchTargets*	DIDO_FetchTargets_New(void);
-extern void	DIDO_FetchTargets_Destroy(DIDO_FetchTargets* me);
+extern bool DIO_Lib_Initialize(void);
+extern void DIO_Lib_Cleanup(void);
 
-// Get current acquisition targets
-extern vector	DIDO_FetchTargets_GetFetchItems(DIDO_FetchTargets* me);
+// Configure the pulse counter
+extern bool DIO_Lib_ConfigPulseCounter(unsigned long pinId,
+    bool isPulseHigh, unsigned long minPulseWidth, unsigned long maxPulseCount);
 
-// Manage acquisition targets
-extern void	DIDO_FetchTargets_Add(
-    DIDO_FetchTargets* me, const DIDO_FetchItem* target);
-extern void	DIDO_FetchTargets_Clear(DIDO_FetchTargets* me);
+// Reset the pulse counter
+extern bool DIO_Lib_ResetPulseCount(unsigned long pinId, unsigned long initVal);
 
-#endif  // _DIDO_FETCH_TARGETS_H_
+// Read value of the pulse counter
+extern bool DIO_Lib_ReadPulseCount(unsigned long pinId, unsigned long* outVal);
+
+// Read on-time integrated value of the pulse (in seconds)
+extern bool	DIO_Lib_ReadDutySumTime(unsigned long pinID, unsigned long* outSecs);
+
+// Get input level of all DIO ports/pins
+extern bool DIO_Lib_ReadLevels(int outLevels[NUM_DIO]);
+
+// Get input level of specific pin
+extern bool DIO_Lib_ReadPinLevel(unsigned long pinId, unsigned int* outVal);
+
+// Get RTApp Version
+extern bool DIO_Lib_ReadRTAppVersion(char* rtAppVersion);
+
+#endif  // _LIB_DIO_H_

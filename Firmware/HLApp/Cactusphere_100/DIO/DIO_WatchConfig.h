@@ -22,37 +22,38 @@
  * THE SOFTWARE.
  */
 
-#ifndef _LIB_DIDO_H_
-#define _LIB_DIDO_H_
+#ifndef _DIO_WATCH_CONFIG_H_
+#define _DIO_WATCH_CONFIG_H_
 
+#ifndef _STDBOOL_H
 #include <stdbool.h>
+#endif
 
-#define NUM_DIDO	4
+#ifndef CONTAINERS_VECTOR_H
+#include <vector.h>
+#endif
+
+#include "DIO_PropertyItem.h"
+
+typedef struct DIO_WatchConfig	DIO_WatchConfig;
+typedef struct _json_value	json_value;
+
+#ifndef NUM_DIO
+#define NUM_DIO 2
+#endif
 
 // Initialization and cleanup
-extern bool DIDO_Lib_Initialize(void);
-extern void DIDO_Lib_Cleanup(void);
+extern DIO_WatchConfig*	DIO_WatchConfig_New(void);
+extern void	DIO_WatchConfig_Destroy(DIO_WatchConfig* me);
 
-// Configure the pulse counter
-extern bool DIDO_Lib_ConfigPulseCounter(unsigned long pinId,
-    bool isPulseHigh, unsigned long minPulseWidth, unsigned long maxPulseCount);
+// Load DIO contact input watcher configuration from JSON
+extern bool	DIO_WatchConfig_LoadFromJSON(DIO_WatchConfig* me, DIO_PropertyData* data,
+    const json_value* json, vector propertyItem, const char* version);
 
-// Reset the pulse counter
-extern bool DIDO_Lib_ResetPulseCount(unsigned long pinId, unsigned long initVal);
+// Get configuration of DIO contact input watchers
+extern vector	DIO_WatchConfig_GetFetchItems(DIO_WatchConfig* me);
 
-// Read value of the pulse counter
-extern bool DIDO_Lib_ReadPulseCount(unsigned long pinId, unsigned long* outVal);
+// Get enable port number of DIO contact input
+int DIO_WatchConfig_GetWatchEnablePorts(DIO_WatchConfig* me, bool* status);
 
-// Read on-time integrated value of the pulse (in seconds)
-extern bool	DIDO_Lib_ReadDutySumTime(unsigned long pinID, unsigned long* outSecs);
-
-// Get input level of all DIDO ports/pins
-extern bool DIDO_Lib_ReadLevels(int outLevels[NUM_DIDO]);
-
-// Get input level of specific pin
-extern bool DIDO_Lib_ReadPinLevel(unsigned long pinId, unsigned int* outVal);
-
-// Get RTApp Version
-extern bool DIDO_Lib_ReadRTAppVersion(char* rtAppVersion);
-
-#endif  // _LIB_DIDO_H_
+#endif  // _DIO_WATCH_CONFIG_H_

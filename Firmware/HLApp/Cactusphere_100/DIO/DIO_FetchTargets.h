@@ -22,27 +22,26 @@
  * THE SOFTWARE.
  */
 
-#ifndef _DIDO_CONFIG_MGR_H_
-#define _DIDO_CONFIG_MGR_H_
+#ifndef _DIO_FETCH_TARGETS_H_
+#define _DIO_FETCH_TARGETS_H_
 
-#include "DIDO_FetchConfig.h"
-#include "DIDO_WatchConfig.h"
-#include "cactusphere_error.h"
-
-#ifndef NUM_DIDO
-#define NUM_DIDO 4
+#ifndef CONTAINERS_VECTOR_H
+#include <vector.h>
 #endif
 
-// Initializaition and cleanup
-extern void	DIDO_ConfigMgr_Initialize(void);
-extern void	DIDO_ConfigMgr_Cleanup(void);
+typedef struct DIO_FetchTargets	DIO_FetchTargets;
+typedef struct DIO_FetchItem	DIO_FetchItem;
 
-// Apply new configuration
-extern SphereWarning	DIDO_ConfigMgr_LoadAndApplyIfChanged(
-    const unsigned char* payload, unsigned int payloadSize, vector item);
+// Initialization and cleanup
+extern DIO_FetchTargets*	DIO_FetchTargets_New(void);
+extern void	DIO_FetchTargets_Destroy(DIO_FetchTargets* me);
 
-// Get configuratioin
-extern DIDO_FetchConfig*  DIDO_ConfigMgr_GetFetchConfig(void);
-extern DIDO_WatchConfig*  DIDO_ConfigMgr_GetWatchConfig(void);
+// Get current acquisition targets
+extern vector	DIO_FetchTargets_GetFetchItems(DIO_FetchTargets* me);
 
-#endif  // _DIDO_CONFIG_MGR_H_
+// Manage acquisition targets
+extern void	DIO_FetchTargets_Add(
+    DIO_FetchTargets* me, const DIO_FetchItem* target);
+extern void	DIO_FetchTargets_Clear(DIO_FetchTargets* me);
+
+#endif  // _DIO_FETCH_TARGETS_H_

@@ -22,24 +22,24 @@
  * THE SOFTWARE.
  */
 
-#include "DIDO_FetchTargets.h"
+#include "DIO_FetchTargets.h"
 
-#include "DIDO_FetchItem.h"
+#include "DIO_FetchItem.h"
 
-// DIDO_FetchTargets data members
-struct DIDO_FetchTargets {
+// DIO_FetchTargets data members
+struct DIO_FetchTargets {
     vector	mTargets;
 };
 
 // Initialization and cleanup
-DIDO_FetchTargets*
-DIDO_FetchTargets_New(void)
+DIO_FetchTargets*
+DIO_FetchTargets_New(void)
 {
-    DIDO_FetchTargets*	newObj =
-        (DIDO_FetchTargets*)malloc(sizeof(DIDO_FetchTargets));
+    DIO_FetchTargets*	newObj =
+        (DIO_FetchTargets*)malloc(sizeof(DIO_FetchTargets));
 
     if (NULL != newObj) {
-        newObj->mTargets = vector_init(sizeof(DIDO_FetchItem*));
+        newObj->mTargets = vector_init(sizeof(DIO_FetchItem*));
         if (NULL == newObj->mTargets) {
             free(newObj);
             return NULL;
@@ -50,29 +50,29 @@ DIDO_FetchTargets_New(void)
 }
 
 void
-DIDO_FetchTargets_Destroy(DIDO_FetchTargets* me)
+DIO_FetchTargets_Destroy(DIO_FetchTargets* me)
 {
-    DIDO_FetchTargets_Clear(me);
+    DIO_FetchTargets_Clear(me);
     vector_destroy(me->mTargets);
     free(me);
 }
 
 // Get current acquisition targets
 vector
-DIDO_FetchTargets_GetFetchItems(DIDO_FetchTargets* me)
+DIO_FetchTargets_GetFetchItems(DIO_FetchTargets* me)
 {
     return me->mTargets;
 }
 
 // Manage acquisition targets
 void
-DIDO_FetchTargets_Add(DIDO_FetchTargets* me, const DIDO_FetchItem* target)
+DIO_FetchTargets_Add(DIO_FetchTargets* me, const DIO_FetchItem* target)
 {
     vector_add_last(me->mTargets, (void*)&target);
 }
 
 void
-DIDO_FetchTargets_Clear(DIDO_FetchTargets* me)
+DIO_FetchTargets_Clear(DIO_FetchTargets* me)
 {
     vector_clear(me->mTargets);
 }

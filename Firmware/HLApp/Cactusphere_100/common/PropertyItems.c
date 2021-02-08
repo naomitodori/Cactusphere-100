@@ -99,6 +99,8 @@ void PropertyItems_AddItem(
         }
 
         break;
+    case TYPE_NULL:
+        break;
     default:
         goto err;
     }

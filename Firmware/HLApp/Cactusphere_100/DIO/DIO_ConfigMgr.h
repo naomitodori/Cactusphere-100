@@ -22,15 +22,31 @@
  * THE SOFTWARE.
  */
 
-#ifndef _DIDO_FETCH_TIMERS_H_
-#define _DIDO_FETCH_TIMERS_H_
+#ifndef _DIO_CONFIG_MGR_H_
+#define _DIO_CONFIG_MGR_H_
 
-#ifndef _FETCH_TIMERS_H_
-#include <FetchTimers.h>
+#include "DIO_FetchConfig.h"
+#include "DIO_WatchConfig.h"
+#include "cactusphere_error.h"
+
+#ifndef NUM_DIO
+#define NUM_DIO 2
 #endif
 
-// Initialization
-extern void	DIDO_FetchTimers_InitForTimer(
-    FetchTimers* me, FetchItemBase* fetchItem);
+#ifndef _STDIDONT_H
+#include <stdint.h>
+#endif
 
-#endif  // _DIDO_FETCH_TIMERS_H_
+// Initializaition and cleanup
+extern void	DIO_ConfigMgr_Initialize(void);
+extern void	DIO_ConfigMgr_Cleanup(void);
+
+// Apply new configuration
+extern SphereWarning	DIO_ConfigMgr_LoadAndApplyIfChanged(
+    const unsigned char* payload, unsigned int payloadSize, vector item);
+
+// Get configuratioin
+extern DIO_FetchConfig*  DIO_ConfigMgr_GetFetchConfig(void);
+extern DIO_WatchConfig*  DIO_ConfigMgr_GetWatchConfig(void);
+
+#endif  // _DIO_CONFIG_MGR_H_

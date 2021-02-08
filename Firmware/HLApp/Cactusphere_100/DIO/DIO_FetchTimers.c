@@ -22,22 +22,22 @@
  * THE SOFTWARE.
  */
 
-#include "DIDO_FetchTimers.h"
+#include "DIO_FetchTimers.h"
 
-#include "DIDO_FetchItem.h"
-#include "LibDIDO.h"
+#include "DIO_FetchItem.h"
+#include "LibDIO.h"
 
 // Initialization
 void
-DIDO_FetchTimers_InitForTimer(FetchTimers* me, FetchItemBase* fetchItemBase)
+DIO_FetchTimers_InitForTimer(FetchTimers* me, FetchItemBase* fetchItemBase)
 {
     // configure and start the pulse counter for a pin
-    DIDO_FetchItem*	fetchTime = (DIDO_FetchItem*)fetchItemBase;
+    DIO_FetchItem*	fetchTime = (DIO_FetchItem*)fetchItemBase;
 
     if (fetchTime->isCountClear) {
-        DIDO_Lib_ResetPulseCount(fetchTime->pinID, 0);
+        DIO_Lib_ResetPulseCount(fetchTime->pinID, 0);
         fetchTime->isCountClear = false;
     }
-    DIDO_Lib_ConfigPulseCounter(fetchTime->pinID, fetchTime->isPulseHigh,
+    DIO_Lib_ConfigPulseCounter(fetchTime->pinID, fetchTime->isPulseHigh,
         fetchTime->minPulseWidth, fetchTime->maxPulseCount);
 }
