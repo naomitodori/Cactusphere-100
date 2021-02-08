@@ -40,18 +40,18 @@
 #include "PulseCounter.h"
 
 
-#define NUM_DI	4	// num of DI ports
+#define NUM_DIDO	4	// num of DIDO ports
 
 #define OK	1
 #define NG	-1
 
-// DI gpio pin number/ID
+// DIDO gpio pin number/ID
 const int DIPIN_0 = 0;
 const int DIPIN_1 = 1;
-const int DIPIN_2 = 2;
-const int DIPIN_3 = 3;
-static const int periodMs = 1;  // 1[ms] (for polling DIn pin's input level) 
-static PulseCounter sPulseCounter[NUM_DI];
+const int DOPIN_0 = 2;
+const int DOPIN_1 = 3;
+static const int periodMs = 1;  // 1[ms] (for polling DIn pin's input level)
+static PulseCounter sPulseCounter[NUM_DIDO];
 
 
 extern uint32_t StackTop; // &StackTop == end of TCM
@@ -63,7 +63,7 @@ static _Noreturn void RTCoreMain(void);
 static void
 Handle1msIrq(void)
 {
-    for (int i = 0; i < NUM_DI; i++) {
+    for (int i = 0; i < NUM_DIDO; i++) {
         if (sPulseCounter[i].isStart) {
             PulseCounter_Counter(&sPulseCounter[i]);
         }
@@ -75,7 +75,7 @@ static PulseCounter*
 GetTargetPt(int pinId)
 {
     // return PulseCounter which specified with the DIn pin ID
-    for (int i = 0; i < NUM_DI; i++) {
+    for (int i = 0; i < NUM_DIDO; i++) {
         if (pinId == PulseCounter_GetPinId(&sPulseCounter[i])) {
             return &sPulseCounter[i];
         }
@@ -152,28 +152,28 @@ RTCoreMain(void)
     Mt3620_Gpio_AddBlock(&grp0);
     Mt3620_Gpio_ConfigurePinForInput(DIPIN_0);
     Mt3620_Gpio_ConfigurePinForInput(DIPIN_1);
-    Mt3620_Gpio_ConfigurePinForInput(DIPIN_2);
-    Mt3620_Gpio_ConfigurePinForInput(DIPIN_3);
+    Mt3620_Gpio_ConfigurePinForOutput(DOPIN_0);
+    Mt3620_Gpio_ConfigurePinForOutput(DOPIN_1);
 
     // initialize pulse counters and start the polling timer
     PulseCounter_Initialize(&sPulseCounter[0], DIPIN_0);
     PulseCounter_Initialize(&sPulseCounter[1], DIPIN_1);
-    PulseCounter_Initialize(&sPulseCounter[2], DIPIN_2);
-    PulseCounter_Initialize(&sPulseCounter[3], DIPIN_3);
+    PulseCounter_Initialize(&sPulseCounter[2], DOPIN_0);
+    PulseCounter_Initialize(&sPulseCounter[3], DOPIN_1);
     Gpt_LaunchTimerMs(TimerGpt1, periodMs, Handle1msIrq);
 
     // main loop
     for (;;) {
         // wait and receive a request message from HLApp and process it
-        const DI_DriverMsg* msg = InterCoreComm_WaitAndRecvRequest();
+        const DIDO_DriverMsg* msg = InterCoreComm_WaitAndRecvRequest();
 
         if (msg != NULL) {
             PulseCounter*   targetP = NULL;
-            DI_ReturnMsg    retMsg;
+            DIDO_ReturnMsg    retMsg;
             int val;
 
             switch (msg->header.requestCode) {
-            case DI_SET_CONFIG_AND_START:
+            case DIDO_SET_CONFIG_AND_START:
                 targetP = GetTargetPt(msg->body.setConfig.pinId);
                 if (targetP == NULL) {
                     InterCoreComm_SendIntValue(NG);
@@ -188,7 +188,7 @@ RTCoreMain(void)
 //                    int i = 0;
                 }
                 break;
-            case DI_PULSE_COUNT_RESET:
+            case DIDO_PULSE_COUNT_RESET:
                 targetP = GetTargetPt(msg->body.resetPulseCount.pinId);
                 if (targetP == NULL) {
                     InterCoreComm_SendIntValue(NG);
@@ -200,7 +200,7 @@ RTCoreMain(void)
 //                    int i = 0;
                 }
                 break;
-            case DI_READ_PULSE_COUNT:
+            case DIDO_READ_PULSE_COUNT:
                 targetP = GetTargetPt(msg->body.pinId.pinId);
                 if (targetP == NULL) {
                     InterCoreComm_SendIntValue(NG);
@@ -212,7 +212,7 @@ RTCoreMain(void)
 //                    int i = 0;
                 }
                 break;
-            case DI_READ_DUTY_SUM_TIME:
+            case DIDO_READ_DUTY_SUM_TIME:
                 targetP = GetTargetPt(msg->body.pinId.pinId);
                 if (targetP == NULL) {
                     InterCoreComm_SendIntValue(NG);
@@ -223,29 +223,17 @@ RTCoreMain(void)
 //                    int i = 0;
                 }
                 break;
-            case DI_READ_PULSE_LEVEL:
-                for (int i = 0; i < NUM_DI; i++) {
+            case DIDO_READ_PULSE_LEVEL:
+                for (int i = 0; i < NUM_DIDO; i++) {
                     retMsg.message.levels[i] = PulseCounter_GetLevel(&sPulseCounter[i]);
                 }
                 retMsg.returnCode = OK;
                 retMsg.messageLen = sizeof(retMsg.message.levels);
-                if (InterCoreComm_SendReadData((uint8_t*)&retMsg, sizeof(DI_ReturnMsg))) {
+                if (InterCoreComm_SendReadData((uint8_t*)&retMsg, sizeof(DIDO_ReturnMsg))) {
 //                    int i = 0;
                 }
                 break;
-            case DI_READ_PIN_LEVEL:
-                targetP = GetTargetPt(msg->body.pinId.pinId);
-                if (targetP == NULL) {
-                    InterCoreComm_SendIntValue(NG);
-                    continue;
-                }
-                val = (int)PulseCounter_GetPinLevel(targetP);
-
-                if (InterCoreComm_SendIntValue(val)) {
-//                    int i = 0;
-                }
-                break;
-            case DO_READ_PIN_LEVEL:
+            case DIDO_READ_PIN_LEVEL:
                 targetP = GetTargetPt(msg->body.pinId.pinId);
                 if (targetP == NULL) {
                     InterCoreComm_SendIntValue(NG);
@@ -263,18 +251,18 @@ RTCoreMain(void)
                     InterCoreComm_SendIntValue(NG);
                     continue;
                 }
-                val = (int)PulseCounter_GetPinLevel(targetP);
+                val = (int)PulseCounter_SetPinLevel(targetP);
 
                 if (InterCoreComm_SendIntValue(val)) {
 //                    int i = 0;
                 }
                 break;
-            case DI_READ_VERSION:
+            case DIDO_READ_VERSION:
                 memset(retMsg.message.version, 0x00, sizeof(retMsg.message.version));
                 strncpy(retMsg.message.version, RTAPP_VERSION, strlen(RTAPP_VERSION) + 1);
                 retMsg.returnCode = OK;
                 retMsg.messageLen = strlen(RTAPP_VERSION);
-                if (InterCoreComm_SendReadData((uint8_t*)&retMsg, sizeof(DI_ReturnMsg))) {
+                if (InterCoreComm_SendReadData((uint8_t*)&retMsg, sizeof(DIDO_ReturnMsg))) {
 //                    int i = 0;
                 }
                 break;
