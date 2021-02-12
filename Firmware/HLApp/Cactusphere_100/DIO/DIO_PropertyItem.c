@@ -58,7 +58,7 @@ const char PWMDutyCycleDOKey[]          = "PWMDutyCycle_DO";            // PWMDu
 #define DIO_PORT_OFFSET 1
 
 static bool DIO_PropertyItem_GetIntValue(const json_value* jsonObj, uint32_t* value, int base, vector item, const char* itemName) {
-    bool ret = json_GetIntValue(jsonObj, value, 10) ? true : false;
+    bool ret = (json_GetIntValue(jsonObj, value, 10) || (jsonObj->type == json_null)) ? true : false;
     if (jsonObj->type == json_null) {
         PropertyItems_AddItem(item, itemName, TYPE_NULL);
     } else {
@@ -100,8 +100,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
         json_value* item = json->u.object.values[i].value;
 
         if (0 == strncmp(propertyName, FunctionTypeDIKey, FunctionTypeDILen)) { // DI Function Type
-            pinid = strtol(&propertyName[FunctionTypeDILen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[FunctionTypeDILen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -109,8 +108,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->diData[pinid].diFunctionType = value;
             }
         } else if (0 == strncmp(propertyName, IntervalDIKey, IntervalDILen)) { // DI Interval
-            pinid = strtol(&propertyName[IntervalDILen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[IntervalDILen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -121,8 +119,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->diData[pinid].intervalSec = value;
             }
         } else if (0 == strncmp(propertyName, EdgeTriggerDIkey, EdgeTriggerDILen)) { // DI EdgeTriggerIsHigh
-            pinid = strtol(&propertyName[EdgeTriggerDILen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[EdgeTriggerDILen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             bool value;
@@ -130,8 +127,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->diData[pinid].isEdgeTriggerHigh = value;
             }
         } else if (0 == strncmp(propertyName, MinPulseWidthDIKey, MinPulseWidthDILen)) { // DI minPulseWidth
-            pinid = strtol(&propertyName[MinPulseWidthDILen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[MinPulseWidthDILen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -142,8 +138,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->diData[pinid].minPulseWidth = value;
             }
         } else if (0 == strncmp(propertyName, MaxPulseCountDIKey, MaxPulseCountDILen)) { // DI maxPulseCount
-            pinid = strtol(&propertyName[MaxPulseCountDILen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[MaxPulseCountDILen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -154,8 +149,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->diData[pinid].maxPulseCount = value;
             }
         } else if (0 == strncmp(propertyName, FunctionTypeDOKey, FunctionTypeDOLen)) { // DO Function Type
-            pinid = strtol(&propertyName[FunctionTypeDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[FunctionTypeDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -163,8 +157,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].doFunctionType = value;
             }
         } else if (0 == strncmp(propertyName, IsNotifyDOKey, IsNotifyDOLen)) { // DO IsNotify
-            pinid = strtol(&propertyName[IsNotifyDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[IsNotifyDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             bool value;
@@ -172,8 +165,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].isDoNotify = value;
             }
         } else if (0 == strncmp(propertyName, SingleFunctionTypeDOKey, SingleFunctionTypeDOLen)) { // DO Function Type(Single)
-            pinid = strtol(&propertyName[SingleFunctionTypeDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[SingleFunctionTypeDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -181,8 +173,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].singleFunctionType = value;
             }
         } else if (0 == strncmp(propertyName, RelationPortDOKey, RelationPortDOLen)) { // DO RelationDIPort
-            pinid = strtol(&propertyName[RelationPortDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[RelationPortDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -190,8 +181,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].relationDIPort = value;
             }
         } else if (0 == strncmp(propertyName, RelationFunctionTypeDOKey, RelationFunctionTypeDOLen)) { // DO Function Type(Relation)
-            pinid = strtol(&propertyName[RelationFunctionTypeDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[RelationFunctionTypeDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -199,8 +189,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].relationFunctionType = value;
             }
         } else if (0 == strncmp(propertyName, DIEdgeTriggerDOKey, DIEdgeTriggerDOLen)) { // DO DriveStatusIsHigh
-            pinid = strtol(&propertyName[DIEdgeTriggerDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[DIEdgeTriggerDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             bool value;
@@ -208,8 +197,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].isDIEdgeTriggerHigh = value;
             }
         } else if (0 == strncmp(propertyName, DIPulseCountTriggerDOKey, DIPulseCountTriggerDOLen)) { // DO DIPulseCountTrigger
-            pinid = strtol(&propertyName[DIPulseCountTriggerDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[DIPulseCountTriggerDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -220,8 +208,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].triggerPulseCount = value;
             }
         } else if (0 == strncmp(propertyName, DriveStatusDOKey, DriveStatusDOLen)) { // DO DriveStatus
-            pinid = strtol(&propertyName[DriveStatusDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[DriveStatusDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             bool value;
@@ -229,8 +216,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].isDODriveStateHigh = value;
             }
         } else if (0 == strncmp(propertyName, DriveDelayDOKey, DriveDelayDOLen)) { // DO DriveDelay
-            pinid = strtol(&propertyName[DriveDelayDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[DriveDelayDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -241,8 +227,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].doDriveDelay = value;
             }
         } else if (0 == strncmp(propertyName, DriveSecondsDOKey, DriveSecondsDOLen)) { // DO DriveSeconds
-            pinid = strtol(&propertyName[DriveSecondsDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[DriveSecondsDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -253,8 +238,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].doDriveSeconds = value;
             }
         } else if (0 == strncmp(propertyName, PulseCycleDOKey, PulseCycleDOLen)) { // DO PulseCycle
-            pinid = strtol(&propertyName[PulseCycleDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[PulseCycleDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -265,8 +249,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                 data->doData[pinid].doPulseCycle = value;
             }
         } else if (0 == strncmp(propertyName, PWMDutyCycleDOKey, PWMDutyCycleDOLen)) { // DO PWMDutyCycle
-            pinid = strtol(&propertyName[PWMDutyCycleDOLen], NULL, 10) - DIO_PORT_OFFSET;
-            if (pinid < 0) {
+            if ((pinid = strtol(&propertyName[PWMDutyCycleDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
                 continue;
             }
             uint32_t value;
@@ -283,115 +266,125 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
 
 bool DIO_PropertyItem_CheckDOSetting(DIO_PropertyData* data){
     bool ret = true;
+    uint32_t pinid;
 
     for (int i = 0; i < NUM_DIO; i++) {
-        switch(data->doData[i].doFunctionType) {
-            case DOFUNC_TYPE_NOTSELECTED:
+        switch (data->doData[i].doFunctionType)
+        {
+        case DOFUNC_TYPE_NOTSELECTED:
+            break;
+        case DOFUNC_TYPE_SINGLE:
+            switch (data->doData[i].singleFunctionType)
+            {
+            case DOFUNC_SGL_TYPE_NOTSELECTED:
+                // Error
+                ret = false;
                 break;
-            case DOFUNC_TYPE_SINGLE:
-                switch(data->doData[i].singleFunctionType) {
-                    case DOFUNC_SGL_TYPE_NOTSELECTED: // error
-                        ret = false;
-                        break;
-                    case DOFUNC_SGL_TYPE_DRIVE:
-                        // doDriveDelay, doDriveSeconds
-                        // 閾値チェック
-                    /*
-                        if(!(data->doData[i].doDriveDelay >= 1 && data->doData[i].doDriveDelay <= 86400)) {
-                            ret = false;
-                            continue;
-                        }
-                        if(!(data->doData[i].doDriveSeconds >= 1 && data->doData[i].doDriveSeconds <= 86400)) {
-                            ret = false;
-                            continue;
-                        }
-                    */
-                        break;
-                    case DOFUNC_SGL_TYPE_PULSE:
-                        // doPulseCycle
-                        // 閾値チェック
-                    /*    
-                        if(!(data->doData[i].doPulseCycle >= 1 && data->doData[i].doPulseCycle <= 86400)) {
-                            ret = false;
-                            continue;
-                        }
-                    */    
-                        break;
-                    case DOFUNC_SGL_TYPE_PWM:
-                        // doPulseCycle
-                        // doPwmDutyCycle(0-100)
-                        // 閾値チェック
-                        /*
-                        if(!(data->doData[i].doPulseCycle >= 1 && data->doData[i].doPulseCycle <= 86400)) {
-                            ret = false;
-                            continue;
-                        }*/
-                        if(!(data->doData[i].doPwmDutyCycle >= 0 && data->doData[i].doPwmDutyCycle <= 100)) {
-                            ret = false;
-                            continue;
-                        }
-                        break;
-                    default:
-                        break;
-                }
+            case DOFUNC_SGL_TYPE_DRIVE:
+                // Option : doDriveDelay, doDriveSeconds
                 break;
-            case DOFUNC_TYPE_RELATION:
-                if(data->doData[i].relationDIPort == DI_REL_PORT_NOTSELECTED) {
+            case DOFUNC_SGL_TYPE_PULSE:
+                // Option : doPulseCycle
+                if (!(data->doData[i].doPulseCycle >= 1 && data->doData[i].doPulseCycle <= 100000)) {
                     ret = false;
-                    continue;
                 }
-                switch(data->doData[i].relationFunctionType) {
-                    // relationDIPort, isDIEdgeTriggerHigh, triggerPulseCount
-                    case DOFUNC_REL_TYPE_NOTSELECTED: // error
-                        ret = false;
-                        break;
-                    case DOFUNC_REL_TYPE_DRIVE:
-                        // doDriveDelay, doDriveSeconds
-                        /*
-                        if(!(data->doData[i].doDriveDelay >= 1 && data->doData[i].doDriveDelay <= 86400)) {
-                            ret = false;
-                            continue;
-                        }
-                        if(!(data->doData[i].doDriveSeconds >= 1 && data->doData[i].doDriveSeconds <= 86400)) {
-                            ret = false;
-                            continue;
-                        }
-                        */
-                        break;
-                    case DOFUNC_REL_TYPE_INTERLOCK: // 連動
-                        break;
-                    case DOFUNC_REL_TYPE_INVERT: // 反転
-                        break;
-                    case DOFUNC_REL_TYPE_SHAP: // 整形
-                        break;
-                    case DOFUNC_REL_TYPE_PULSE: // パルス出力
-                        // doPulseCycle
-                        /*
-                        if(!(data->doData[i].doPulseCycle >= 1 && data->doData[i].doPulseCycle <= 86400)) {
-                            ret = false;
-                            continue;
-                        }
-                        */
-                        break;
-                    case DOFUNC_REL_TYPE_PWM: // PWM
-                        // doPulseCycle
-                        // doPwmDutyCycle
-                        /*
-                        if(!(data->doData[i].doPulseCycle >= 1 && data->doData[i].doPulseCycle <= 86400)) {
-                            ret = false;
-                            continue;
-                        }*/
-                        if(!(data->doData[i].doPwmDutyCycle >= 0 && data->doData[i].doPwmDutyCycle <= 100)) {
-                            ret = false;
-                            continue;
-                        }
-                        break;
-                    default:
-                        break;
+                break;
+            case DOFUNC_SGL_TYPE_PWM:
+                // Option : doPulseCycle, doPwmDutyCycle
+                if ((!(data->doData[i].doPulseCycle >= 1 && data->doData[i].doPulseCycle <= 100000)) ||
+                    (!(data->doData[i].doPwmDutyCycle >= 0 && data->doData[i].doPwmDutyCycle <= 100))) {
+                    ret = false;
                 }
                 break;
             default:
                 break;
+            }
+            break;
+        case DOFUNC_TYPE_RELATION:
+            if (data->doData[i].relationDIPort == DI_REL_PORT_NOTSELECTED) {
+                // Error
+                ret = false;
+                break;
+            }
+            pinid = data->doData[i].relationDIPort - DIO_PORT_OFFSET;
+
+            switch (data->doData[i].relationFunctionType)
+            {
+            case DOFUNC_REL_TYPE_NOTSELECTED:
+                // Error
+                ret = false;
+                break;
+            case DOFUNC_REL_TYPE_DRIVE:
+                // Relation : PulseCount
+                if (data->diData[pinid].diFunctionType != DIFUNC_TYPE_PULSECOUNTER) {
+                    ret = false;
+                }
+                if (!(data->doData[i].triggerPulseCount >= 1 && data->doData[i].triggerPulseCount <= 0x7FFFFFFF)) {
+                    ret = false;
+                }
+                if (data->diData[pinid].maxPulseCount < data->doData[i].triggerPulseCount) {
+                    ret = false;
+                }
+                break;
+            case DOFUNC_REL_TYPE_INTERLOCK:
+                // Relation : Edge
+                if (data->diData[pinid].diFunctionType != DIFUNC_TYPE_EDGE) {
+                    ret = false;
+                }
+                break;
+            case DOFUNC_REL_TYPE_INVERT:
+                // Relation : Edge
+                if (data->diData[pinid].diFunctionType != DIFUNC_TYPE_EDGE) {
+                    ret = false;
+                }
+                break;
+            case DOFUNC_REL_TYPE_SHAP:
+                // Relation : Edge
+                if (data->diData[pinid].diFunctionType != DIFUNC_TYPE_EDGE) {
+                    ret = false;
+                }
+                break;
+            case DOFUNC_REL_TYPE_PULSE:
+                // Relation : PulseCount or Edge
+                if (data->diData[pinid].diFunctionType == DIFUNC_TYPE_PULSECOUNTER) {
+                    if (!(data->doData[i].triggerPulseCount >= 1 && data->doData[i].triggerPulseCount <= 0x7FFFFFFF)) {
+                        ret = false;
+                    }
+                    if (data->diData[pinid].maxPulseCount < data->doData[i].triggerPulseCount) {
+                        ret = false;
+                    }
+                } else if(data->diData[pinid].diFunctionType != DIFUNC_TYPE_EDGE){
+                    ret = false;
+                }
+                // Option : doPulseCycle
+                if (!(data->doData[i].doPulseCycle >= 1 && data->doData[i].doPulseCycle <= 100000)) {
+                    ret = false;
+                }
+                break;
+            case DOFUNC_REL_TYPE_PWM:
+                // Relation : PulseCount or Edge
+                if (data->diData[pinid].diFunctionType == DIFUNC_TYPE_PULSECOUNTER) {
+                    if (!(data->doData[i].triggerPulseCount >= 1 && data->doData[i].triggerPulseCount <= 0x7FFFFFFF)) {
+                        ret = false;
+                    }
+                    if (data->diData[pinid].maxPulseCount < data->doData[i].triggerPulseCount) {
+                        ret = false;
+                    }
+                } else if(data->diData[pinid].diFunctionType != DIFUNC_TYPE_EDGE){
+                    ret = false;
+                }
+                // Option : doPulseCycle, doPwmDutyCycle
+                if ((!(data->doData[i].doPulseCycle >= 1 && data->doData[i].doPulseCycle <= 100000)) ||
+                    (!(data->doData[i].doPwmDutyCycle >= 0 && data->doData[i].doPwmDutyCycle <= 100))) {
+                    ret = false;
+                }
+                break;
+            default:
+                break;
+            }
+            break;
+        default:
+            break;
         }
     }
     return ret;

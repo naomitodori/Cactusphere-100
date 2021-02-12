@@ -155,6 +155,10 @@ static volatile sig_atomic_t exitCode = ExitCode_Success;
 #include "DIO_FetchConfig.h"
 #include "DIO_WatchConfig.h"
 #include "LibDIO.h"
+typedef enum {
+    DOControl_Start = 0,
+    DOControl_Stop,
+} DOControlMode;
 #endif  // USE_DIO
 
 static int ct_error = 0;
@@ -1451,15 +1455,18 @@ err_value:
                 goto err;
             }
             strncpy(cmdPayload, payload, size);
-            uint8_t mode = strtol(cmdPayload, NULL, 10);
+            DOControlMode mode = strtol(cmdPayload, NULL, 10);
+            if (mode != DOControl_Start && mode != DOControl_Stop) {
+                goto err_mode;
+            }
+            strcpy(deviceMethodResponse, "\"Success\"");
 
             free(cmdPayload);
         } else {
-            //init value error
-            strcpy(deviceMethodResponse, "\"Illegal init value\"");
+err_mode:
+            //mode error
+            strcpy(deviceMethodResponse, "\"Illegal mode\"");
         }
-
-        Log_Debug("control_DO%d", pinId);
     } else {
 err:
         strcpy(deviceMethodResponse, "\"Error\"");
@@ -1471,7 +1478,6 @@ err:
     if (NULL != response) {
         (void)memcpy(*response, deviceMethodResponse, *response_size);
     }
-    IoT_CentralLib_SendProperty(reportedPropertiesString);
 
 #endif  // USE_DIO
 end:

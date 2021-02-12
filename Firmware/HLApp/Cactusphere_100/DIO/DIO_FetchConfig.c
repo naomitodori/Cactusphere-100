@@ -86,7 +86,7 @@ DIO_FetchConfig_LoadFromJSON(DIO_FetchConfig* me, DIO_PropertyData* data,
         return false;
     }
 
-    DIO_FetchItem setting[NUM_DIO] = {
+    DIO_FetchItem currentValue[NUM_DIO] = {
         // telemetryName, intervalSec, pinID, isPulseCounter, isPulseHigh, isCountClear, minPulseWidth, maxPulseCount
         {"", 1, 0, false, false, false, 200, 0x7FFFFFFF},
         {"", 1, 1, false, false, false, 200, 0x7FFFFFFF}
@@ -95,7 +95,7 @@ DIO_FetchConfig_LoadFromJSON(DIO_FetchConfig* me, DIO_PropertyData* data,
     if (! vector_is_empty(me->mFetchItems)) {
         DIO_FetchItem* tmp = (DIO_FetchItem*)vector_get_data(me->mFetchItems);
         for (int i = 0; i < vector_size(me->mFetchItems); i++) {
-            memcpy(&setting[tmp->pinID], tmp, sizeof(DIO_FetchItem));
+            memcpy(&currentValue[tmp->pinID], tmp, sizeof(DIO_FetchItem));
             tmp ++;
         }
     }
@@ -112,8 +112,8 @@ DIO_FetchConfig_LoadFromJSON(DIO_FetchConfig* me, DIO_PropertyData* data,
 
     for (uint32_t i = 0; i < NUM_DIO; i++) {
         DIO_FetchItem config =
-        // telemetryName, intervalSec, pinID, isPulseCounter, isPulseHigh, isCountClear, minPulseWidth, maxPulseCount
-        {"", 1, 0, false, false, true, 200, 0x7FFFFFFF};
+        // telemetryName, intervalSec, pinID, isPulseCounter, isCountClear, isPulseHigh, minPulseWidth, maxPulseCount
+        {"", 1, 0, false, true, false, 200, 0x7FFFFFFF};
 
         switch(data->diData[i].diFunctionType) {
             case DIFUNC_TYPE_PULSECOUNTER:
@@ -130,12 +130,15 @@ DIO_FetchConfig_LoadFromJSON(DIO_FetchConfig* me, DIO_PropertyData* data,
                 config.pinID = i;
 
                 // isPulseCounter
-                if (setting[i].isPulseCounter) {
-                    if((setting[i].intervalSec == data->diData[i].intervalSec) &&
-                       (setting[i].isPulseHigh == data->diData[i].isEdgeTriggerHigh) &&
-                       (setting[i].minPulseWidth == data->diData[i].minPulseWidth) &&
-                       (setting[i].maxPulseCount == data->diData[i].maxPulseCount)) {
-                        config.isPulseCounter = false;
+                config.isPulseCounter = true;
+
+                // isCountClear
+                if (currentValue[i].isPulseCounter) {
+                    if((currentValue[i].intervalSec == data->diData[i].intervalSec) &&
+                       (currentValue[i].isPulseHigh == data->diData[i].isEdgeTriggerHigh) &&
+                       (currentValue[i].minPulseWidth == data->diData[i].minPulseWidth) &&
+                       (currentValue[i].maxPulseCount == data->diData[i].maxPulseCount)) {
+                        config.isCountClear = false;
                     }
                 }
 

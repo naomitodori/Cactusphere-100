@@ -104,7 +104,7 @@ DIO_WatchConfig_LoadFromJSON(DIO_WatchConfig* me, DIO_PropertyData* data,
             case DIFUNC_TYPE_NOTSELECTED:
             case DIFUNC_TYPE_PULSECOUNTER:
             default:
-                break;
+                continue;
         }
 
         vector_add_last(me->mWatchItems, &config);
