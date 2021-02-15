@@ -134,6 +134,7 @@ static volatile sig_atomic_t exitCode = ExitCode_Success;
 #include "ModbusFetchConfig.h"
 #include "LibModbus.h"
 #include "ModbusDataFetchScheduler.h"
+#define GPIO_USERLED MT3620_GPIO8
 #endif  // USE_MODBUS
 
 #ifdef USE_MODBUS_TCP
@@ -147,6 +148,7 @@ static volatile sig_atomic_t exitCode = ExitCode_Success;
 #include "DI_FetchConfig.h"
 #include "DI_WatchConfig.h"
 #include "LibDI.h"
+#define GPIO_USERLED MT3620_GPIO8
 #endif  // USE_DI
 
 #ifdef USE_DIO
@@ -155,6 +157,7 @@ static volatile sig_atomic_t exitCode = ExitCode_Success;
 #include "DIO_FetchConfig.h"
 #include "DIO_WatchConfig.h"
 #include "LibDIO.h"
+#define GPIO_USERLED MT3620_GPIO23
 typedef enum {
     DOControl_Start = 0,
     DOControl_Stop,
@@ -812,8 +815,7 @@ static ExitCode InitPeripheralsAndHandlers(void)
     // LED
 	Log_Debug("Opening MT3620_GPIO8 as output\n");
 	ledGpioFd =
-	//	GPIO_OpenAsOutput(MT3620_GPIO8, GPIO_OutputMode_PushPull, GPIO_Value_High);
-		GPIO_OpenAsOutput(MT3620_GPIO23, GPIO_OutputMode_PushPull, GPIO_Value_High);
+		GPIO_OpenAsOutput(GPIO_USERLED, GPIO_OutputMode_PushPull, GPIO_Value_High);
 	if (ledGpioFd < 0) {
 		Log_Debug("ERROR: Could not open LED: %s (%d).\n", strerror(errno), errno);
 		return ExitCode_TermHandler_SigTerm;
