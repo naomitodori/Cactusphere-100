@@ -75,26 +75,27 @@ typedef enum {
 } DIRelationPort;
 
 typedef struct DIO_DIPropertyData {
-    DIFuncType diFunctionType;
-    uint32_t intervalSec;
-    bool     isEdgeTriggerHigh;
-    uint32_t minPulseWidth;
-    uint32_t maxPulseCount; 
+    DIFuncType  diFunctionType;
+    uint32_t    intervalSec;
+    bool        isEdgeTriggerHigh;
+    uint32_t    minPulseWidth;
+    uint32_t    maxPulseCount;
+    bool        isPollingActiveHigh;
 } DIO_DIPropertyData;
 
 typedef struct DIO_DOPropertyData {
-    DOFuncType doFunctionType;
-    bool     isDoNotify;
-    DOFuncSingleType singleFunctionType;
-    DIRelationPort relationDIPort;
-    DOFuncRelationType relationFunctionType;
-    bool     isDIEdgeTriggerHigh;
-    uint32_t triggerPulseCount;
-    bool     isDODriveStateHigh;
-    uint32_t doDriveDelay;
-    uint32_t doDriveSeconds;
-    uint32_t doPulseCycle;
-    uint32_t doPwmDutyCycle;
+    DOFuncType          doFunctionType;
+    bool                isDoNotify;
+    DOFuncSingleType    singleFunctionType;
+    DIRelationPort      relationDIPort;
+    DOFuncRelationType  relationFunctionType;
+    bool                isDIEdgeTriggerHigh;
+    uint32_t            triggerPulseCount;
+    bool                isDODriveStateHigh;
+    uint32_t            doDriveDelay;
+    uint32_t            doDriveSeconds;
+    uint32_t            doPulseCycle;
+    uint32_t            doPwmDutyCycle;
 } DIO_DOPropertyData;
 
 typedef struct DIO_PropertyData {

@@ -87,9 +87,9 @@ DIO_FetchConfig_LoadFromJSON(DIO_FetchConfig* me, DIO_PropertyData* data,
     }
 
     DIO_FetchItem currentValue[NUM_DIO] = {
-        // telemetryName, intervalSec, pinID, isPulseCounter, isPulseHigh, isCountClear, minPulseWidth, maxPulseCount
-        {"", 1, 0, false, false, false, 200, 0x7FFFFFFF},
-        {"", 1, 1, false, false, false, 200, 0x7FFFFFFF}
+        // telemetryName, intervalSec, pinID, isPulseCounter, isCountClear, isPulseHigh, isPollingActiveHigh, minPulseWidth, maxPulseCount
+        {"", 1, 0, false, false, false, false, 200, 0x7FFFFFFF},
+        {"", 1, 1, false, false, false, false, 200, 0x7FFFFFFF}
     };
 
     if (! vector_is_empty(me->mFetchItems)) {
@@ -112,8 +112,8 @@ DIO_FetchConfig_LoadFromJSON(DIO_FetchConfig* me, DIO_PropertyData* data,
 
     for (uint32_t i = 0; i < NUM_DIO; i++) {
         DIO_FetchItem config =
-        // telemetryName, intervalSec, pinID, isPulseCounter, isCountClear, isPulseHigh, minPulseWidth, maxPulseCount
-        {"", 1, 0, false, true, false, 200, 0x7FFFFFFF};
+        // telemetryName, intervalSec, pinID, isPulseCounter, isCountClear, isPulseHigh, isPollingActiveHigh, minPulseWidth, maxPulseCount
+        {"", 1, 0, false, true, false, false, 200, 0x7FFFFFFF};
 
         switch(data->diData[i].diFunctionType) {
             case DIFUNC_TYPE_PULSECOUNTER:
@@ -161,14 +161,17 @@ DIO_FetchConfig_LoadFromJSON(DIO_FetchConfig* me, DIO_PropertyData* data,
                 break;
             case DIFUNC_TYPE_POLLING:
                 // telemetryName
-                sprintf(config.telemetryName, "DI%d_PollingStatus", i + DIO_FETCH_PORT_OFFSET);
-                // intervalSec
+                sprintf(config.telemetryName, "DI%d_PollingStatus", i + DIO_FETCH_PORT_OFFSET);                // intervalSec
                 if(data->diData[i].intervalSec >= 1 && data->diData[i].intervalSec <= 86400) {
                     config.intervalSec = data->diData[i].intervalSec;
                 } else {
                     ret = false;
                     continue;
                 }
+                // pinID
+                config.pinID = i;
+                // isPollingActiveHigh
+                config.isPollingActiveHigh = data->diData[i].isPollingActiveHigh;
                 break;
             case DIFUNC_TYPE_NOTSELECTED:
             case DIFUNC_TYPE_EDGE:

@@ -42,6 +42,7 @@ const char IntervalDIKey[]              = "Interval_DI";                // Inter
 const char EdgeTriggerDIkey[]           = "EdgeTrigger_DI";             // EdgeTrigger_DI
 const char MinPulseWidthDIKey[]         = "MinPulseWidth_DI";           // MinPulseWidth_DI
 const char MaxPulseCountDIKey[]         = "MaxPulseCount_DI";           // MaxPulseCount_DI
+const char PollIsActiveHighKey[]        = "PollIsActiveHigh_DI";        // PollIsActiveHigh_DI
 const char FunctionTypeDOKey[]          = "FunctionType_DO";            // FunctionType_DO
 const char IsNotifyDOKey[]              = "IsNotify_DO";                // IsNotify_DO
 const char SingleFunctionTypeDOKey[]    = "SingleFunctionType_DO";      // SingleFunctionType_DO
@@ -81,6 +82,7 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
     const size_t EdgeTriggerDILen           = strlen(EdgeTriggerDIkey);             // EdgeTrigger_DI
     const size_t MinPulseWidthDILen         = strlen(MinPulseWidthDIKey);           // MinPulseWidth_DI
     const size_t MaxPulseCountDILen         = strlen(MaxPulseCountDIKey);           // MaxPulseCount_DI
+    const size_t PollIsActiveHighDILen      = strlen(PollIsActiveHighKey);          // PollIsActiveHigh_DI
     const size_t FunctionTypeDOLen          = strlen(FunctionTypeDOKey);            // FunctionType_DO
     const size_t IsNotifyDOLen              = strlen(IsNotifyDOKey);                // IsNotify_DO
     const size_t SingleFunctionTypeDOLen    = strlen(SingleFunctionTypeDOKey);      // SingleFunctionType_DO
@@ -147,6 +149,14 @@ bool DIO_PropertyItem_ParseJson(DIO_PropertyData* data,
                     value = 0x7FFFFFFF;
                 }
                 data->diData[pinid].maxPulseCount = value;
+            }
+        } else if (0 == strncmp(propertyName, PollIsActiveHighKey, PollIsActiveHighDILen)) { // DI PollIsActiveHigh
+            if ((pinid = strtol(&propertyName[PollIsActiveHighDILen], NULL, 10) - DIO_PORT_OFFSET) < 0) {
+                continue;
+            }
+            bool value;
+            if (DIO_PropertyItem_GetBoolValue(item, &value, propertyItem, propertyName)) {
+                data->diData[pinid].isPollingActiveHigh = value;
             }
         } else if (0 == strncmp(propertyName, FunctionTypeDOKey, FunctionTypeDOLen)) { // DO Function Type
             if ((pinid = strtol(&propertyName[FunctionTypeDOLen], NULL, 10) - DIO_PORT_OFFSET) < 0) {

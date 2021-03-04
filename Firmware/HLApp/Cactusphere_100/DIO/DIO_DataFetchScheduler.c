@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <applibs/gpio.h>
 
 #include "DIO_DataFetchScheduler.h"
 
@@ -40,6 +41,9 @@ typedef struct DIO_DataFetchScheduler {
     DIO_FetchTargets*    mFetchTargets;  // acquisition targets of pulse conter
     DIO_Watcher*         mWatcher;       // contact input watch targets
 } DIO_DataFetchScheduler;
+
+#define DIO_POLLING_VALUE_OFF  0
+#define DIO_POLLING_VALUE_ON   1
 
 //
 // DIO_DataFetchScheduler's private procedure/method
@@ -104,6 +108,14 @@ DIO_DataFetchScheduler_DoSchedule(DataFetchSchedulerBase* me)
                 if (! DIO_Lib_ReadPinLevel(item->pinID, &currentStatus)) {
                     continue;
                 };
+
+                // In the case of Active-Low, telemetry value is converted.
+                // IsActiveHigh: false(Active-Low) -> GPIO_Value_Low: DI_POLLING_VALUE_ON (1), GPIO_Value_High : DI_POLLING_VALUE_OFF(0)
+                // IsActiveHigh: true(Active-High) -> GPIO_Value_Low: DI_POLLING_VALUE_OFF(0), GPIO_Value_High : DI_POLLING_VALUE_ON (1)
+                if (!item->isPollingActiveHigh) {
+                    currentStatus = (currentStatus == GPIO_Value_Low ? DIO_POLLING_VALUE_ON : DIO_POLLING_VALUE_OFF);
+                }
+
                 StringBuf_AppendByPrintf(me->mStringBuf, "%ld", currentStatus);
             }
 

@@ -40,6 +40,7 @@ typedef struct DIO_FetchItem {
     bool        isPulseCounter; // pulse counter(true) / polling(false)
     bool        isCountClear;   // whether to clear the counter
     bool        isPulseHigh;    // whether settlement as pulse when high(:1) or low(:0) level
+    bool        isPollingActiveHigh; // whether the value notified by polling is Active High
     uint32_t    minPulseWidth;  // minimum length for settlement as pulse
     uint32_t    maxPulseCount;  // max pulse counter value
 } DIO_FetchItem;
